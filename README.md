@@ -1,6 +1,10 @@
 # Gym Tracker
 
-Web app personal mobile-first para registrar sesiones de gimnasio en Gym Tracker. Lee la planilla de entrenamiento del día desde Google Sheets, guía la sesión con cronómetros integrados y envía un resumen por email al terminar. Usuario único, login con contraseña, hosting en Cloudflare Pages a costo cero.
+<p align="center">
+        <img src="assets/banner.png" alt="Gym Tracker" width="100%"/>
+</p>
+
+Web app personal mobile-first para registrar sesiones de gimnasio. Lee la planilla de entrenamiento del día desde Google Sheets, guía la sesión con cronómetros integrados y envía un resumen por email al terminar. Usuario único, login con contraseña, hosting en Cloudflare Pages a costo cero.
 
 ## Stack
 
