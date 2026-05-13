@@ -4,7 +4,7 @@ import { useState } from 'preact/hooks'
 const emoji = (char) => html`<span class="indicador-icon indicador-icon-emoji" aria-hidden="true">${char}</span>`
 
 const ICON_SUENO = emoji('🌙')
-const ICON_MOTIVACION = emoji('🎯')
+const ICON_MOTIVACION = emoji('✨')
 const ICON_ENERGIA = emoji('⚡')
 const ICON_ESTRES = emoji('🧠')
 const ICON_ARTICULAR = emoji('🦴')
