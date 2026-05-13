@@ -56,6 +56,7 @@ export function buildEmailHtml(sesion) {
   <h3 style="font-size:15px;margin-bottom:10px;">Bienestar pre-entreno</h3>
   <table style="width:100%;margin-bottom:24px;border-collapse:collapse;font-size:14px;">
     <tr><td style="padding:3px 0;color:#555;">Sueño</td><td>${stars(b.sueno)}</td></tr>
+    ${b.motivacion != null ? `<tr><td style="padding:3px 0;color:#555;">Motivación</td><td>${stars(b.motivacion)}</td></tr>` : ''}
     <tr><td style="padding:3px 0;color:#555;">Energía</td><td>${stars(b.energia)}</td></tr>
     <tr><td style="padding:3px 0;color:#555;">Estrés</td><td>${stars(b.estres)}</td></tr>
     <tr><td style="padding:3px 0;color:#555;">Salud articular</td><td>${stars(b.saludArticular)}</td></tr>

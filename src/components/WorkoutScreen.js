@@ -29,7 +29,7 @@ function initEjercicios(workout) {
   return workout.ejercicios.map(ej => ({
     orden: ej.orden,
     nombre: ej.nombre,
-    comentario: ej.comentarioSugerido || '',
+    comentario: '',
     rpeEjercicio: ej.seriesProgramadas[0]?.rpeProgramado ?? null,
     series: ej.seriesProgramadas.map(s => ({
       numero: s.numero,
@@ -163,7 +163,7 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
 
                         ${serie.completada ? html`
                           <span class="serie-done-data">
-                            ${serie.reps} reps
+                            ${serie.reps} repeticiones
                             ${serie.rpeProgramado != null ? html` <span class="rpe-badge">@ RPE${serie.rpeProgramado}</span>` : ''}
                             ${!serie.esPesoCorporal && serie.pesoKg != null ? html` · ${serie.pesoKg} kg` : ''}
                             ${serie.esPesoCorporal ? html` · peso corporal` : ''}
@@ -173,7 +173,7 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
                           <div class="serie-active-content">
                             <div class="serie-inputs-row">
                               <div class="stepper-group">
-                                <span class="stepper-label">Reps</span>
+                                <span class="stepper-label">Repeticiones</span>
                                 <div class="stepper">
                                   <button type="button" class="stepper-btn"
                                     onClick=${() => updateSerie(ejIdx, serieIdx, { reps: Math.max(1, serie.reps - 1) })}>−</button>
@@ -199,7 +199,7 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
                             <div class="serie-meta-row">
                               ${serie.rpeProgramado != null && html`<span class="rpe-badge">@ RPE${serie.rpeProgramado}</span>`}
                               ${serie.esPesoCorporal && html`<span class="rpe-badge">peso corporal</span>`}
-                              <span class="descanso-info">Desc: ${fmtMS(serie.descansoPrescritoSeg)}</span>
+                              <span class="descanso-info">Descanso: ${fmtMS(serie.descansoPrescritoSeg)}</span>
                             </div>
                             <button
                               type="button"
@@ -210,7 +210,7 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
                           </div>
                         ` : html`
                           <span class="serie-pending-data">
-                            ${serie.reps} reps
+                            ${serie.reps} repeticiones
                             ${serie.rpeProgramado != null ? ` @ RPE${serie.rpeProgramado}` : ''}
                             ${!serie.esPesoCorporal && serie.pesoKg != null ? ` · ${serie.pesoKg} kg` : ''}
                           </span>

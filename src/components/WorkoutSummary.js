@@ -26,7 +26,7 @@ export default function WorkoutSummary({ workout, onStart, onLogout, onSelectDay
             class="btn-secondary"
             style="margin-top:24px;width:100%"
             onClick=${() => setShowPicker(p => !p)}
-          >${showPicker ? 'Cancelar' : 'Iniciar otro día'}</button>
+          >${showPicker ? 'Cancelar' : 'Iniciar entrenamiento de otro día'}</button>
           ${showPicker && html`
             <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
               ${[workout.anterior, workout.proximo].filter(Boolean).map(d => html`

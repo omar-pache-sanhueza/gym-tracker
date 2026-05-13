@@ -24,7 +24,7 @@ body {
   background: var(--bg-base);
   color: var(--text-primary);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
-  font-size: 16px;
+  font-size: 17px;
   line-height: 1.5;
   min-height: 100%;
   -webkit-font-smoothing: antialiased;
@@ -97,7 +97,7 @@ body {
   color: #0A0A0A;
   cursor: pointer;
   font-family: inherit;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 600;
   height: 56px;
   width: 100%;
@@ -114,7 +114,7 @@ body {
   color: var(--text-primary);
   cursor: pointer;
   font-family: inherit;
-  font-size: 16px;
+  font-size: 17px;
   height: 48px;
   transition: border-color 150ms ease-out;
   -webkit-tap-highlight-color: transparent;
@@ -136,8 +136,8 @@ body {
 .btn-ghost.small { font-size: 13px; }
 
 /* ─── Mensajes ─── */
-.msg-error { color: var(--danger); font-size: 14px; text-align: center; }
-.msg-secondary { color: var(--text-secondary); font-size: 13px; }
+.msg-error { color: var(--danger); font-size: 15px; text-align: center; }
+.msg-secondary { color: var(--text-secondary); font-size: 14px; }
 
 /* ─── Screen header ─── */
 .screen-header {
@@ -147,8 +147,8 @@ body {
   margin-bottom: 24px;
   padding-top: 8px;
 }
-.screen-header-meta { color: var(--text-secondary); font-size: 13px; }
-.screen-header-title { font-size: 20px; font-weight: 600; }
+.screen-header-meta { color: var(--text-secondary); font-size: 14px; }
+.screen-header-title { font-size: 22px; font-weight: 600; }
 
 /* ─── WorkoutSummary ─── */
 .exercise-preview-list { display: flex; flex-direction: column; gap: 12px; }
@@ -160,9 +160,9 @@ body {
   background: var(--bg-elev-1);
   border-radius: 12px;
 }
-.exercise-preview-num { color: var(--text-tertiary); font-size: 14px; min-width: 20px; padding-top: 2px; }
-.exercise-preview-name { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
-.exercise-preview-meta { color: var(--text-secondary); font-size: 13px; }
+.exercise-preview-num { color: var(--text-tertiary); font-size: 15px; min-width: 20px; padding-top: 2px; }
+.exercise-preview-name { font-size: 17px; font-weight: 500; margin-bottom: 4px; }
+.exercise-preview-meta { color: var(--text-secondary); font-size: 15px; }
 
 .rest-day { text-align: center; padding: 48px 0; }
 .rest-day-icon { font-size: 56px; display: block; margin-bottom: 16px; }
@@ -172,10 +172,12 @@ body {
 .bienestar-form { display: flex; flex-direction: column; gap: 24px; }
 
 .indicador-group { display: flex; flex-direction: column; gap: 6px; }
-.indicador-label-row { display: flex; justify-content: space-between; align-items: baseline; }
-.indicador-label { font-size: 15px; font-weight: 500; }
-.indicador-value { color: var(--accent); font-size: 13px; font-weight: 600; }
-.indicador-nota { color: var(--text-tertiary); font-size: 12px; }
+.indicador-label-row { display: flex; justify-content: space-between; align-items: center; }
+.indicador-label-wrap { display: flex; align-items: center; gap: 10px; }
+.indicador-icon { width: 22px; height: 22px; color: var(--accent); flex-shrink: 0; filter: drop-shadow(0 0 4px rgba(57,255,20,0.5)); }
+.indicador-label { font-size: 17px; font-weight: 500; }
+.indicador-value { color: var(--accent); font-size: 14px; font-weight: 600; }
+.indicador-nota { color: var(--text-tertiary); font-size: 13px; }
 
 .stars-row { display: flex; gap: 8px; margin-top: 4px; }
 .star-btn {
@@ -213,7 +215,7 @@ body {
   color: var(--accent);
   min-width: 80px;
 }
-.workout-header-day { color: var(--text-secondary); font-size: 14px; flex: 1; }
+.workout-header-day { color: var(--text-secondary); font-size: 15px; flex: 1; }
 
 /* ─── Workout content ─── */
 .workout-content {
@@ -237,9 +239,9 @@ body {
 .exercise-card.done { opacity: 0.55; }
 
 .exercise-card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
-.exercise-num { color: var(--text-tertiary); font-size: 13px; min-width: 20px; }
-.exercise-name { font-size: 16px; font-weight: 600; flex: 1; }
-.exercise-done-check { color: var(--accent); font-size: 16px; }
+.exercise-num { color: var(--text-tertiary); font-size: 14px; min-width: 20px; }
+.exercise-name { font-size: 18px; font-weight: 600; flex: 1; }
+.exercise-done-check { color: var(--accent); font-size: 18px; }
 
 /* ─── Series ─── */
 .series-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
@@ -252,11 +254,18 @@ body {
   gap: 10px;
   flex-wrap: wrap;
 }
-.serie-row.active { background: var(--accent-soft); border-radius: 10px; padding: 10px; margin: 0 -4px; }
-.serie-label { font-size: 13px; color: var(--text-secondary); min-width: 56px; padding-top: 2px; flex-shrink: 0; }
-.serie-done-data { color: var(--accent); font-size: 14px; flex: 1; }
-.serie-check { color: var(--accent); font-size: 16px; }
-.serie-pending-data { color: var(--text-tertiary); font-size: 14px; flex: 1; }
+.serie-row.active {
+  background: rgba(57, 255, 20, 0.18);
+  border: 1px solid var(--border-accent);
+  border-radius: 10px;
+  padding: 10px;
+  margin: 0 -4px;
+  box-shadow: 0 0 12px rgba(57, 255, 20, 0.25), inset 0 0 0 1px rgba(57,255,20,0.1);
+}
+.serie-label { font-size: 15px; color: var(--text-secondary); min-width: 56px; padding-top: 2px; flex-shrink: 0; }
+.serie-done-data { color: var(--accent); font-size: 16px; flex: 1; }
+.serie-check { color: var(--accent); font-size: 18px; }
+.serie-pending-data { color: var(--text-tertiary); font-size: 16px; flex: 1; }
 
 .serie-active-content { flex: 1; display: flex; flex-direction: column; gap: 8px; }
 .serie-inputs-row { display: flex; gap: 16px; flex-wrap: wrap; }
@@ -264,7 +273,7 @@ body {
 
 /* ─── Stepper ─── */
 .stepper-group { display: flex; flex-direction: column; gap: 4px; }
-.stepper-label { font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; }
+.stepper-label { font-size: 13px; color: var(--text-secondary); letter-spacing: 0.2px; }
 .stepper { display: flex; align-items: center; gap: 4px; }
 .stepper-btn {
   background: var(--bg-elev-3);
@@ -295,10 +304,10 @@ body {
   background: var(--bg-elev-2);
   border-radius: 6px;
   color: var(--text-secondary);
-  font-size: 12px;
+  font-size: 13px;
   padding: 3px 8px;
 }
-.descanso-info { color: var(--text-tertiary); font-size: 12px; }
+.descanso-info { color: var(--text-tertiary); font-size: 13px; }
 
 /* ─── Rest overlay ─── */
 .rest-overlay {
