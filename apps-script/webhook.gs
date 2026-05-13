@@ -7,21 +7,17 @@ const ALLOWED_RECIPIENT = 'omar.pache@gmail.com';
 function doPost(e) {
   try {
     const body = JSON.parse(e.postData.contents);
-    const { payload, sig } = body;
-    // payload llega como string ya serializado; verificamos HMAC sobre esos bytes
-    // exactos para evitar diferencias de JSON.stringify entre runtimes.
-    var payloadStr;
-    if (typeof payload === 'string') {
-      payloadStr = payload;
-    } else {
-      // Compatibilidad con versión anterior del worker.
-      payloadStr = JSON.stringify(payload);
+    const { payloadB64, sig } = body;
+    if (!payloadB64 || !sig) {
+      return jsonResponse({ ok: false, error: 'missing_fields' });
     }
-    const expected = computeHmac(payloadStr, SHARED_SECRET);
+    // HMAC sobre el base64 (ASCII puro) para evitar problemas de codificación UTF-8.
+    const expected = computeHmac(payloadB64, SHARED_SECRET);
     if (sig !== expected) {
       return jsonResponse({ ok: false, error: 'unauthorized' });
     }
-    const data = JSON.parse(payloadStr);
+    const decoded = Utilities.newBlob(Utilities.base64Decode(payloadB64)).getDataAsString('UTF-8');
+    const data = JSON.parse(decoded);
     if (data.to !== ALLOWED_RECIPIENT) {
       return jsonResponse({ ok: false, error: 'recipient_not_allowed' });
     }

@@ -50,10 +50,13 @@ export async function onRequestGet({ env, request }) {
   }
 
   const message = JSON.stringify(payload)
+  const payloadB64 = btoa(String.fromCharCode(...new TextEncoder().encode(message)))
   trace.payloadMessageLength = message.length
   trace.payloadMessagePreview = message.slice(0, 120)
+  trace.payloadB64Length = payloadB64.length
+  trace.payloadB64Preview = payloadB64.slice(0, 60)
 
-  const sig = await computeHmac(message, secret)
+  const sig = await computeHmac(payloadB64, secret)
   trace.computedSig = sig
   trace.computedSigLength = sig.length
 
@@ -64,7 +67,7 @@ export async function onRequestGet({ env, request }) {
     const res = await fetch(webhook, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ payload: message, sig }),
+      body: JSON.stringify({ payloadB64, sig }),
     })
     status = res.status
     bodyText = await res.text()
