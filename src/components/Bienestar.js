@@ -36,7 +36,11 @@ const ICON_ARTICULAR = html`
 
 const ICON_RECUPERACION = html`
   <svg class="indicador-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M21 11V5a3 3 0 0 0-6 0v4.2c0 1.6-1.3 2.8-2.8 2.8H7a4 4 0 0 0-4 4v.5C3 19 5 21 8 21h6c4 0 7-3 7-7v-3zM18 4c.6 0 1 .4 1 1v3c0 .6-.4 1-1 1s-1-.4-1-1V5c0-.6.4-1 1-1z"/>
+    <rect x="13" y="1.5" width="5.5" height="13" rx="2.5"/>
+    <rect x="3" y="12.5" width="13" height="5.5" rx="2.5"/>
+    <ellipse cx="9" cy="11.5" rx="5" ry="3.2"/>
+    <circle cx="3.7" cy="15.2" r="2.8"/>
+    <rect x="13.5" y="0.5" width="4.5" height="2" rx="1"/>
   </svg>
 `
 
