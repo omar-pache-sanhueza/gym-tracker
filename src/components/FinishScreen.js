@@ -17,7 +17,7 @@ export default function FinishScreen({ sesionData, onSubmit, loading, error }) {
       </header>
 
       <div class="finish-section">
-        <p class="finish-label">Duración automática</p>
+        <p class="finish-label">Duración registrada</p>
         <p class="finish-duration">${formatDuration(sesionData.duracionTotalSeg)}</p>
       </div>
 

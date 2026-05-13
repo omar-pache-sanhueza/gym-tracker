@@ -12,6 +12,7 @@ export async function submitWorkout(sesion) {
   const res = await fetch('/api/workout/submit', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    credentials: 'same-origin',
     body: JSON.stringify(sesion),
   })
   const data = await res.json()
