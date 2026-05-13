@@ -180,7 +180,7 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
                             ${serie.rpeProgramado != null && html`
                               <div class="serie-field">
                                 <span class="serie-field-label">Intensidad</span>
-                                <span class="serie-field-value">@ RPE ${serie.rpeProgramado}</span>
+                                <span class="serie-field-value">RPE @${serie.rpeProgramado}</span>
                               </div>
                             `}
 
@@ -216,7 +216,7 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
                           ${serie.completada ? html`
                             <span class="serie-done-data">
                               ${serie.reps} repeticiones
-                              ${serie.rpeProgramado != null ? html` <span class="rpe-badge">@ RPE${serie.rpeProgramado}</span>` : ''}
+                              ${serie.rpeProgramado != null ? html` <span class="rpe-badge">RPE @${serie.rpeProgramado}</span>` : ''}
                               ${!serie.esPesoCorporal && serie.pesoKg != null ? html` · ${serie.pesoKg} kg` : ''}
                               ${serie.esPesoCorporal ? html` · peso corporal` : ''}
                             </span>
@@ -224,7 +224,7 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
                           ` : html`
                             <span class="serie-pending-data">
                               ${serie.reps} repeticiones
-                              ${serie.rpeProgramado != null ? ` @ RPE${serie.rpeProgramado}` : ''}
+                              ${serie.rpeProgramado != null ? ` RPE @${serie.rpeProgramado}` : ''}
                               ${!serie.esPesoCorporal && serie.pesoKg != null ? ` · ${serie.pesoKg} kg` : ''}
                             </span>
                           `}

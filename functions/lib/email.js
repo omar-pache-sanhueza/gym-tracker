@@ -31,7 +31,7 @@ export function buildEmailHtml(sesion) {
         ${ej.series.map(s => `
           <tr>
             <td style="padding:3px 8px 3px 0;color:#555;white-space:nowrap;">Serie ${s.numero}</td>
-            <td style="padding:3px 8px;">${s.reps} reps${s.rpeProgramado ? ` @ RPE${s.rpeProgramado}` : ''}</td>
+            <td style="padding:3px 8px;">${s.reps} reps${s.rpeProgramado ? ` RPE @${s.rpeProgramado}` : ''}</td>
             <td style="padding:3px 8px;">${s.pesoKg !== null && s.pesoKg !== undefined ? `${s.pesoKg} kg` : 'peso corporal'}</td>
             <td style="padding:3px 0;color:#888;">${formatDuration(s.descansoPrescritoSeg)} desc.</td>
           </tr>`).join('')}

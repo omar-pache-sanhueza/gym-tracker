@@ -14,7 +14,7 @@
 
 El propósito es reemplazar el flujo manual actual (mirar la planilla en Drive, cronometrar con el reloj del teléfono y anotar pesos/repeticiones a mano) por una interfaz táctil optimizada para móvil con cronómetro general, descansos por serie y registro guiado de lo ejecutado. El usuario en algún momento del día pasará en limpio de forma manual en la planilla lo enviado al correo.
 
-La unidad operativa de ejecución es la **serie**. La UI no debe usar la palabra inglesa `set`; debe mostrar `Serie 1`, `Serie 2`, etc. Cada serie muestra repeticiones, intensidad programada en formato `@ RPE N`, peso sugerido editable y descanso prescrito para esa serie.
+La unidad operativa de ejecución es la **serie**. La UI no debe usar la palabra inglesa `set`; debe mostrar `Serie 1`, `Serie 2`, etc. Cada serie muestra repeticiones, intensidad programada en formato `RPE @ N`, peso sugerido editable y descanso prescrito para esa serie.
 
 La app no debe mostrar indicadores agregados de carga como volumen total, peso total, tonelaje diario o tonelaje semanal. El resumen se limita a: ejercicios del día, series ejecutadas, indicadores de bienestar, RPE general del día, comentario por ejercicio, comentario general y duración automática.
 
@@ -45,7 +45,7 @@ Que Omar pueda llegar al gimnasio, abrir Gym Tracker en Safari de su iPhone XR, 
 - Soporte para tablets, escritorio o navegadores antiguos.
 - Registro de cardio/caminata complementaria; la planilla menciona "completar con caminata o trote suave", pero eso queda fuera del tracker.
 - Aplicación nativa iOS o Android.
-- RPE real por serie (si se muestra y es editable el RPE por ejercicio). La serie muestra la **intensidad programada** (`@ RPE 1–10`) y la sesión registra un único **RPE general del día** (sugerido y editable).
+- RPE real por serie (si se muestra y es editable el RPE por ejercicio). La serie muestra la **intensidad programada** (`RPE @1–10`) y la sesión registra un único **RPE general del día** (sugerido y editable).
 
 ## 3. Actores
 
@@ -66,7 +66,7 @@ Que Omar pueda llegar al gimnasio, abrir Gym Tracker en Safari de su iPhone XR, 
 | Escritura en la planilla | **No**, solo lectura | No requiere OAuth ni credenciales rotables; basta con una API key de Google |
 | Pre-llenado de campos | **Sí**, valores del sheet como sugerencia editable | Reduce tecleo; usuario solo modifica lo que cambió |
 | Terminología de ejecución | **Serie**, no `set` | UI, modelo de datos y email deben decir `serie` / `series` |
-| Intensidad | `@ RPE 1–10` programado por serie | Se muestra como objetivo; no se pide RPE real por serie |
+| Intensidad | `RPE @1–10` programado por serie | Se muestra como objetivo; no se pide RPE real por serie |
 | Bienestar | 5 indicadores con escala de 1 a 5 estrellas | Sueño, energía, estrés, salud articular y recuperación muscular |
 | RPE de sesión | Un único **RPE general del día** | Se solicita al cierre antes de enviar el email |
 | Duración | Automática | Desde la confirmación de bienestar / `Iniciar entrenamiento` hasta `Finalizar entrenamiento y enviar` |
@@ -322,7 +322,7 @@ Si la planilla entrega `Series = 4`, `Repeticiones = 8`, `RPE = 8`, `Peso = 60` 
 ]
 ```
 
-El usuario puede editar repeticiones y peso de cada serie. La intensidad `@ RPE` se muestra como objetivo programado y no se edita durante la sesión, salvo que el diseño futuro agregue explícitamente edición de programación.
+El usuario puede editar repeticiones y peso de cada serie. La intensidad `RPE @` se muestra como objetivo programado y no se edita durante la sesión, salvo que el diseño futuro agregue explícitamente edición de programación.
 
 ## 8. Sistema de diseño visual
 
@@ -388,7 +388,7 @@ Regla de uso del acento: el verde neón se usa con moderación. En una pantalla 
 **Card de ejercicio:** fondo `--bg-elev-1`, radio 16 px, borde izquierdo 3 px `--accent` cuando el ejercicio está activo; borde izquierdo transparente cuando está colapsado.
 
 **Fila de serie:**
-- Pendiente: etiqueta `Serie N`, inputs visibles para repeticiones y peso, intensidad programada visible como `@ RPE N`, descanso visible, botón `Hecho` secundario.
+- Pendiente: etiqueta `Serie N`, inputs visibles para repeticiones y peso, intensidad programada visible como `RPE @ N`, descanso visible, botón `Hecho` secundario.
 - En progreso: highlight sutil con `--accent-soft` de fondo.
 - Completada: `Serie N` y datos ejecutados en `--accent`, botón reemplazado por un check.
 
@@ -408,7 +408,7 @@ Regla de uso del acento: el verde neón se usa con moderación. En una pantalla 
 | CU-04 | Día de descanso | Omar | La app indica que hoy no toca y muestra el próximo entreno |
 | CU-05 | Registrar bienestar pre-entreno | Omar | Califica sueño, energía, estrés, salud articular y recuperación muscular con 1–5 estrellas + comentario opcional |
 | CU-06 | Iniciar el cronómetro general | Omar | Arranca solo después de completar los indicadores de bienestar y presionar `Iniciar entrenamiento`; corre hasta `Finalizar entrenamiento y enviar` |
-| CU-07 | Ejecutar una serie | Omar | Anota repeticiones/peso reales, ve `@ RPE` programado, marca `Hecho`; se inicia descanso |
+| CU-07 | Ejecutar una serie | Omar | Anota repeticiones/peso reales, ve `RPE @` programado, marca `Hecho`; se inicia descanso |
 | CU-08 | Cronometrar descanso | Sistema | Cuenta regresiva desde el descanso prescrito para esa serie; vibra/suena al terminar |
 | CU-09 | Saltar / extender / pausar descanso | Omar | Botones `Saltar`, `Pausa/Reanudar`, `+30s` |
 | CU-10 | Comentar ejercicio | Omar | Ingresa comentario opcional por ejercicio, se muestra el RPE programado del ejercicio y se puede eitar |
@@ -438,7 +438,7 @@ Regla de uso del acento: el verde neón se usa con moderación. En una pantalla 
 
 **RF-10.** Cada ejercicio debe renderizarse con su orden, nombre, comentario opcional y tantas filas de **serie** como indique la planilla. La interfaz debe usar `Serie 1`, `Serie 2`, etc.; nunca `Set 1` ni `set`. El usuario puede tocar cualquier tarjeta de ejercicio incompleto para seleccionarlo y ejecutarlo fuera del orden programado; al terminar ese ejercicio, el sistema auto-avanza al ejercicio incompleto de menor índice.
 
-**RF-11.** Cada serie debe mostrar, en este orden lógico: número de serie, repeticiones programadas/editables, intensidad programada en formato `@ RPE N` (1–10), peso sugerido editable y descanso prescrito para esa serie.
+**RF-11.** Cada serie debe mostrar, en este orden lógico: número de serie, repeticiones programadas/editables, intensidad programada en formato `RPE @ N` (1–10), peso sugerido editable y descanso prescrito para esa serie.
 
 **RF-12.** Para ejercicios con peso `—` en la planilla (peso corporal), el input de peso debe ocultarse y la serie debe mostrar `peso corporal` o equivalente.
 
@@ -528,19 +528,19 @@ Convención: el header sticky mide ~56 pt y respeta `safe-area-inset-top`. El co
 ├─────────────────────────────┤
 │  Ejercicios de hoy           │
 │  1. Sentadilla libre         │
-│     5 series · 6 reps @ RPE8 │
+│     5 series · 6 reps RPE @8 │
 │     Peso sugerido: 60 kg     │
 │  2. Peso muerto rumano       │
-│     3 series · 9 reps @ RPE8 │
+│     3 series · 9 reps RPE @8 │
 │     Peso sugerido: 50 kg     │
 │  3. Prensa de piernas        │
-│     3 series · 9 reps @ RPE8 │
+│     3 series · 9 reps RPE @8 │
 │     Peso sugerido: 110 kg    │
 │  4. Elevaciones de talón     │
-│     3 series · 15 reps @ RPE8│
+│     3 series · 15 reps RPE @8│
 │     Peso sugerido: 60 kg     │
 │  5. Crunch abdominal         │
-│     3 series · 26 reps @ RPE7│
+│     3 series · 26 reps RPE @7│
 │     Peso corporal            │
 │                              │
 │  [  Comenzar entrenamiento ] │ ← verde neón
@@ -599,17 +599,17 @@ Convención: el header sticky mide ~56 pt y respeta `safe-area-inset-top`. El co
 │ ▌1. Sentadilla libre         │ ← borde izq. neón = activo
 │  Objetivo: 5 series          │
 │                              │
-│  Serie 1 ✓ 6 reps @ RPE8     │ ← verde neón
+│  Serie 1 ✓ 6 reps RPE @8     │ ← verde neón
 │          60 kg · desc 3 min  │
-│  Serie 2 ✓ 6 reps @ RPE8     │
+│  Serie 2 ✓ 6 reps RPE @8     │
 │          60 kg · desc 3 min  │
-│  Serie 3 ▸ [ 6 ] @ RPE8      │
+│  Serie 3 ▸ [ 6 ] RPE @8      │
 │            Peso [ 60 kg ]    │
 │            Descanso 3 min    │
 │            [    Hecho     ]  │
-│  Serie 4    6 reps @ RPE8    │
+│  Serie 4    6 reps RPE @8    │
 │            Peso sugerido 60  │
-│  Serie 5    6 reps @ RPE8    │
+│  Serie 5    6 reps RPE @8    │
 │            Peso sugerido 60  │
 │                              │
 │  Comentario del ejercicio    │
@@ -708,11 +708,11 @@ Convención: el header sticky mide ~56 pt y respeta `safe-area-inset-top`. El co
 │  Ejercicios del día                             │
 │  ┌───────────────────────────────────────────┐  │
 │  │ 1. Sentadilla libre (barra baja)          │  │
-│  │    Serie 1: 6 reps @ RPE8 · 60 kg · 3min  │  │
-│  │    Serie 2: 6 reps @ RPE8 · 60 kg · 3min  │  │
-│  │    Serie 3: 6 reps @ RPE8 · 60 kg · 3min  │  │
-│  │    Serie 4: 5 reps @ RPE8 · 60 kg · 3min  │  │
-│  │    Serie 5: 6 reps @ RPE8 · 57.5 kg · 3min│  │
+│  │    Serie 1: 6 reps RPE @8 · 60 kg · 3min  │  │
+│  │    Serie 2: 6 reps RPE @8 · 60 kg · 3min  │  │
+│  │    Serie 3: 6 reps RPE @8 · 60 kg · 3min  │  │
+│  │    Serie 4: 5 reps RPE @8 · 60 kg · 3min  │  │
+│  │    Serie 5: 6 reps RPE @8 · 57.5 kg · 3min│  │
 │  │    Comentario: Última serie bajé peso...  │  │
 │  └───────────────────────────────────────────┘  │
 │  ... (un bloque por ejercicio) ...              │
@@ -874,7 +874,7 @@ Para considerar la v1 lista para producción, todos estos casos deben pasar:
 5. La pantalla de bienestar permite calificar con 1–5 estrellas: sueño, energía, estrés, salud articular y recuperación muscular, más un comentario opcional; no permite iniciar hasta tener los 5 indicadores completos.
 6. Presionar `Iniciar entrenamiento` después de completar bienestar inicia el cronómetro general y registra `inicioISO`; navegar por la pantalla de resumen o bienestar no cuenta como tiempo de entrenamiento.
 7. Marcar una serie como `Hecho` inicia el descanso con el tiempo correcto extraído del valor `"2 min"` / `"1,5 min"` / `"1 min"` de la planilla.
-8. Cada fila usa la palabra `Serie`, muestra repeticiones, `@ RPE` programado, peso sugerido editable y descanso de esa serie.
+8. Cada fila usa la palabra `Serie`, muestra repeticiones, `RPE @` programado, peso sugerido editable y descanso de esa serie.
 9. El descanso vibra y suena al llegar a 0 (con el teléfono en modo normal).
 10. El cronómetro general sigue corriendo durante los descansos y se ve siempre en el header.
 11. Cerrar la pestaña a mitad de una serie y volver a abrir restaura el estado exacto.
