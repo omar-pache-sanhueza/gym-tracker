@@ -48,11 +48,6 @@ export function buildEmailHtml(sesion) {
 
   <h2 style="font-size:18px;border-bottom:2px solid #f0f0f0;padding-bottom:8px;margin-bottom:16px;">${fechaStr}</h2>
 
-  <table style="width:100%;margin-bottom:24px;border-collapse:collapse;">
-    <tr><td style="padding:4px 0;color:#555;">Duración</td><td style="text-align:right;font-weight:600;">${formatDuration(sesion.duracionTotalSeg)}</td></tr>
-    <tr><td style="padding:4px 0;color:#555;">RPE general del día</td><td style="text-align:right;font-weight:600;">${sesion.rpeGeneralDia} / 10</td></tr>
-  </table>
-
   <h3 style="font-size:15px;margin-bottom:10px;">Bienestar pre-entreno</h3>
   <table style="width:100%;margin-bottom:24px;border-collapse:collapse;font-size:14px;">
     <tr><td style="padding:3px 0;color:#555;">Sueño</td><td>${stars(b.sueno)}</td></tr>
@@ -66,6 +61,11 @@ export function buildEmailHtml(sesion) {
 
   <h3 style="font-size:15px;margin-bottom:10px;">Ejercicios del día</h3>
   ${ejerciciosHtml}
+
+  <table style="width:100%;margin:8px 0 24px;border-collapse:collapse;">
+    <tr><td style="padding:4px 0;color:#555;">Duración</td><td style="text-align:right;font-weight:600;">${formatDuration(sesion.duracionTotalSeg)}</td></tr>
+    <tr><td style="padding:4px 0;color:#555;">RPE general del día</td><td style="text-align:right;font-weight:600;">${String(sesion.rpeGeneralDia).replace('.', ',')} / 10</td></tr>
+  </table>
 
   ${sesion.comentarioGeneralDia ? `
   <h3 style="font-size:15px;margin-bottom:8px;">Comentario general</h3>
