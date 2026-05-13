@@ -1,6 +1,9 @@
 import { html } from 'htm/preact'
+import { useState } from 'preact/hooks'
 
-export default function WorkoutSummary({ workout, onStart, onLogout }) {
+export default function WorkoutSummary({ workout, onStart, onLogout, onSelectDay }) {
+  const [showPicker, setShowPicker] = useState(false)
+
   if (workout.tipo === 'descanso') {
     return html`
       <div class="screen-padded">
@@ -17,6 +20,25 @@ export default function WorkoutSummary({ workout, onStart, onLogout }) {
               <strong style="color:var(--text-primary)">${workout.proximo.diaNombre}</strong>
               · ${formatDate(workout.proximo.fecha)}
             </p>
+          `}
+          <button
+            class="btn-secondary"
+            style="margin-top:24px;width:100%"
+            onClick=${() => setShowPicker(p => !p)}
+          >${showPicker ? 'Cancelar' : 'Iniciar otro día'}</button>
+          ${showPicker && html`
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+              ${(workout.diasDisponibles || []).map(d => html`
+                <button
+                  class="btn-secondary"
+                  style="width:100%;text-align:left;padding:12px 16px"
+                  onClick=${() => onSelectDay(d.fecha)}
+                >
+                  <span style="color:var(--text-primary);font-weight:500">${d.diaNombre}</span>
+                  <span class="msg-secondary" style="margin-left:8px">${formatDate(d.fecha)}</span>
+                </button>
+              `)}
+            </div>
           `}
         </div>
       </div>

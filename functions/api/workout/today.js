@@ -1,26 +1,29 @@
 import { getSheetNames, getSheetValues } from '../../lib/sheets.js'
 import { findWorkoutInSheet, findAllDatesInSheet } from '../../lib/parser.js'
 
-export async function onRequestGet({ env }) {
+export async function onRequestGet({ request, env }) {
   try {
-    const today = getDateInSantiago()
+    const url = new URL(request.url)
+    const fechaParam = url.searchParams.get('fecha')
+    const today = fechaParam || getDateInSantiago()
     const { validSheets } = await loadMesocicloSheets(env)
 
-    // Buscar entreno de hoy
+    // Buscar entreno de la fecha pedida
     for (const { values, name } of validSheets) {
       const workout = findWorkoutInSheet(values, today, name)
       if (workout) return Response.json(workout)
     }
 
-    // Día de descanso: buscar próximo entreno
+    // Día de descanso: buscar próximo entreno y todos los días disponibles
     const allDates = []
     for (const { values, name } of validSheets) {
       allDates.push(...findAllDatesInSheet(values, name))
     }
     allDates.sort((a, b) => a.fecha.localeCompare(b.fecha))
     const proximo = allDates.find(d => d.fecha > today) || null
+    const diasDisponibles = allDates.filter(d => d.fecha >= today)
 
-    return Response.json({ tipo: 'descanso', proximo })
+    return Response.json({ tipo: 'descanso', proximo, diasDisponibles })
   } catch (err) {
     console.error('workout/today:', err)
     return Response.json({ error: err.message || 'Error al leer la planilla.' }, { status: 502 })

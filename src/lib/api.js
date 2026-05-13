@@ -1,5 +1,6 @@
-export async function getWorkoutToday() {
-  const res = await fetch('/api/workout/today', { credentials: 'same-origin' })
+export async function getWorkoutToday(fecha) {
+  const url = fecha ? `/api/workout/today?fecha=${fecha}` : '/api/workout/today'
+  const res = await fetch(url, { credentials: 'same-origin' })
   if (!res.ok) {
     const data = await res.json().catch(() => ({}))
     throw new Error(data.error || `Error ${res.status} al leer la planilla.`)

@@ -120,8 +120,20 @@ export default function App() {
 
   if (screen === 'login') return html`<${Login} onSuccess=${handleLogin} serverError=${loginError} />`
 
+  async function handleSelectDay(fecha) {
+    setScreen('loading')
+    try {
+      const data = await getWorkoutToday(fecha)
+      setWorkout(data)
+      setScreen('summary')
+    } catch (err) {
+      setLoginError(err.message)
+      setScreen('login')
+    }
+  }
+
   if (screen === 'summary') return html`
-    <${WorkoutSummary} workout=${workout} onStart=${() => setScreen('bienestar')} onLogout=${handleLogout} />
+    <${WorkoutSummary} workout=${workout} onStart=${() => setScreen('bienestar')} onLogout=${handleLogout} onSelectDay=${handleSelectDay} />
   `
 
   if (screen === 'bienestar') return html`
