@@ -36,11 +36,10 @@ const ICON_ARTICULAR = html`
 
 const ICON_RECUPERACION = html`
   <svg class="indicador-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <rect x="13" y="1.5" width="5.5" height="13" rx="2.5"/>
-    <rect x="3" y="12.5" width="13" height="5.5" rx="2.5"/>
-    <ellipse cx="9" cy="11.5" rx="5" ry="3.2"/>
-    <circle cx="3.7" cy="15.2" r="2.8"/>
-    <rect x="13.5" y="0.5" width="4.5" height="2" rx="1"/>
+    <ellipse cx="9" cy="11" rx="6" ry="4.2"/>
+    <rect x="3" y="13" width="13" height="6" rx="3"/>
+    <rect x="14" y="2" width="5.5" height="12" rx="2.7"/>
+    <rect x="14.5" y="1" width="4.5" height="1.5" rx="0.7"/>
   </svg>
 `
 
