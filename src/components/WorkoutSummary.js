@@ -12,6 +12,7 @@ export default function WorkoutSummary({ workout, onStart, onLogout, onSelectDay
           <button class="btn-ghost" onClick=${onLogout}>Salir</button>
         </header>
         <div class="rest-day">
+          <p class="screen-header-meta" style="margin-bottom:12px">${formatDate(todayISO())}</p>
           <span class="rest-day-icon">🛌</span>
           <h2>Hoy es día de descanso</h2>
           ${workout.proximo && html`
@@ -82,6 +83,10 @@ export default function WorkoutSummary({ workout, onStart, onLogout, onSelectDay
       </div>
     </div>
   `
+}
+
+function todayISO() {
+  return new Date().toLocaleDateString('sv-SE')
 }
 
 function formatDate(iso) {
