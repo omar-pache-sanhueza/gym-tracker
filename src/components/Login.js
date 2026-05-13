@@ -40,7 +40,7 @@ export default function Login({ onSuccess, serverError }) {
           <input
             class="input-field"
             type="password"
-            placeholder="Di amigo y entra"
+            placeholder="Di, amigo, y entra"
             value=${password}
             onInput=${e => setPassword(e.target.value)}
             autocomplete="current-password"
