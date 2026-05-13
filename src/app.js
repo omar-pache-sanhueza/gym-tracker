@@ -17,6 +17,7 @@ export default function App() {
   const [sesionData, setSesionData] = useState(null)
   const [submitLoading, setSubmitLoading] = useState(false)
   const [submitError, setSubmitError] = useState('')
+  const [loginError, setLoginError] = useState('')
 
   // Restaurar sesión interrumpida desde localStorage
   useEffect(() => {
@@ -33,12 +34,14 @@ export default function App() {
   }, [])
 
   async function handleLogin() {
+    setLoginError('')
     setScreen('loading')
     try {
       const data = await getWorkoutToday()
       setWorkout(data)
       setScreen('summary')
-    } catch {
+    } catch (err) {
+      setLoginError(err.message || 'Error al cargar el entrenamiento.')
       setScreen('login')
     }
   }
@@ -115,7 +118,7 @@ export default function App() {
     </div>
   `
 
-  if (screen === 'login') return html`<${Login} onSuccess=${handleLogin} />`
+  if (screen === 'login') return html`<${Login} onSuccess=${handleLogin} serverError=${loginError} />`
 
   if (screen === 'summary') return html`
     <${WorkoutSummary} workout=${workout} onStart=${() => setScreen('bienestar')} onLogout=${handleLogout} />

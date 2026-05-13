@@ -1,7 +1,7 @@
 import { html } from 'htm/preact'
 import { useState } from 'preact/hooks'
 
-export default function Login({ onSuccess }) {
+export default function Login({ onSuccess, serverError }) {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -15,6 +15,7 @@ export default function Login({ onSuccess }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password }),
+        credentials: 'same-origin',
       })
       const data = await res.json()
       if (res.ok) onSuccess()
@@ -25,6 +26,8 @@ export default function Login({ onSuccess }) {
       setLoading(false)
     }
   }
+
+  const displayError = error || serverError
 
   return html`
     <div class="screen-center">
@@ -43,7 +46,7 @@ export default function Login({ onSuccess }) {
             autocomplete="current-password"
             autofocus
           />
-          ${error && html`<p class="msg-error" style="margin-top:8px">${error}</p>`}
+          ${displayError && html`<p class="msg-error" style="margin-top:8px">${displayError}</p>`}
           <button
             class="btn-primary"
             type="submit"
