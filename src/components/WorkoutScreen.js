@@ -179,8 +179,8 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
 
                             ${serie.rpeProgramado != null && html`
                               <div class="serie-field">
-                                <span class="serie-field-label">@ RPE</span>
-                                <span class="serie-field-value">${serie.rpeProgramado}</span>
+                                <span class="serie-field-label">Intensidad</span>
+                                <span class="serie-field-value">@ RPE ${serie.rpeProgramado}</span>
                               </div>
                             `}
 
