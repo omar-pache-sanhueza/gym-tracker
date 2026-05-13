@@ -5,10 +5,11 @@ function DebugWebhookButton() {
   const [loading, setLoading] = useState(false)
   const [trace, setTrace] = useState(null)
 
-  async function run() {
+  async function run(real) {
     setLoading(true); setTrace(null)
     try {
-      const res = await fetch('/api/debug/test-webhook', { credentials: 'same-origin' })
+      const url = real ? '/api/debug/test-webhook?real=1' : '/api/debug/test-webhook'
+      const res = await fetch(url, { credentials: 'same-origin' })
       setTrace(await res.json())
     } catch (err) {
       setTrace({ ok: false, error: String(err.message || err) })
@@ -18,13 +19,16 @@ function DebugWebhookButton() {
   }
 
   return html`
-    <div style="margin-top:16px">
-      <button class="btn-secondary" style="width:100%" onClick=${run} disabled=${loading}>
-        ${loading ? 'Probando...' : 'Probar webhook'}
+    <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px">
+      <button class="btn-secondary" style="width:100%" onClick=${() => run(false)} disabled=${loading}>
+        ${loading ? 'Probando...' : 'Probar webhook (simple)'}
+      </button>
+      <button class="btn-secondary" style="width:100%" onClick=${() => run(true)} disabled=${loading}>
+        ${loading ? 'Probando...' : 'Probar webhook (payload real)'}
       </button>
       ${trace && html`
         <pre style="
-          margin-top:12px;
+          margin-top:8px;
           background:var(--bg-elev-1);
           border:1px solid var(--border-subtle);
           border-radius:8px;

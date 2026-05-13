@@ -1,11 +1,34 @@
-import { computeHmac } from '../../lib/email.js'
+import { computeHmac, buildEmailHtml } from '../../lib/email.js'
 
-export async function onRequestGet({ env }) {
+function fakeSesion() {
+  return {
+    fecha: new Date().toLocaleDateString('sv-SE'),
+    inicioISO: new Date(Date.now() - 3600 * 1000).toISOString(),
+    finISO: new Date().toISOString(),
+    duracionTotalSeg: 3600,
+    diaNumero: 1,
+    diaNombre: 'Test',
+    rpeGeneralDia: 7,
+    comentarioGeneralDia: 'Test',
+    bienestarPre: {
+      sueno: 5, motivacion: 5, energia: 5, estres: 5,
+      saludArticular: 5, recuperacionMuscular: 5, nota: '',
+    },
+    ejerciciosEjecutados: [{
+      orden: 1, nombre: 'Press de banca', comentario: '',
+      series: [{ numero: 1, reps: 8, rpeProgramado: 8, pesoKg: 70, descansoPrescritoSeg: 180 }],
+    }],
+  }
+}
+
+export async function onRequestGet({ env, request }) {
   const trace = {}
+  const useReal = new URL(request.url).searchParams.get('real') === '1'
 
   const secret = env.APPS_SCRIPT_SECRET
   const webhook = env.APPS_SCRIPT_WEBHOOK
 
+  trace.mode = useReal ? 'real (buildEmailHtml)' : 'simple'
   trace.envSecretPresent = !!secret
   trace.envSecretLength = secret ? secret.length : 0
   trace.envSecretFingerprint = secret ? `${secret.slice(0, 2)}…${secret.slice(-2)}` : null
@@ -16,7 +39,11 @@ export async function onRequestGet({ env }) {
     return Response.json({ ok: false, trace, error: 'Faltan env vars APPS_SCRIPT_SECRET o APPS_SCRIPT_WEBHOOK' })
   }
 
-  const payload = {
+  const payload = useReal ? {
+    to: env.EMAIL_TO || 'omar.pache@gmail.com',
+    subject: 'Gym Tracker - test webhook (real)',
+    htmlBody: buildEmailHtml(fakeSesion()),
+  } : {
     to: env.EMAIL_TO || 'omar.pache@gmail.com',
     subject: 'Gym Tracker - test webhook',
     htmlBody: '<p>Test desde endpoint /api/debug/test-webhook</p>',
