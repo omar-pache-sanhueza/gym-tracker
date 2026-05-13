@@ -91,7 +91,7 @@ function todayISO() {
 
 function formatDate(iso) {
   const d = new Date(iso + 'T12:00:00')
-  const dias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
-  const meses = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
-  return `${dias[d.getDay()]} ${d.getDate()} ${meses[d.getMonth()]}`
+  const dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
+  const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+  return `${dias[d.getDay()]} ${d.getDate()} de ${meses[d.getMonth()]}`
 }
