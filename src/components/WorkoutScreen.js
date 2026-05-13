@@ -199,7 +199,7 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
                             <div class="serie-meta-row">
                               ${serie.rpeProgramado != null && html`<span class="rpe-badge">@ RPE${serie.rpeProgramado}</span>`}
                               ${serie.esPesoCorporal && html`<span class="rpe-badge">peso corporal</span>`}
-                              <span class="descanso-info">Descanso: ${fmtMS(serie.descansoPrescritoSeg)}</span>
+                              <span class="descanso-info">Descanso: ${fmtMS(serie.descansoPrescritoSeg)} minutos</span>
                             </div>
                             <button
                               type="button"
