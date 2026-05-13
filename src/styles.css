@@ -261,12 +261,11 @@ body {
   flex-wrap: wrap;
 }
 .serie-row.active {
-  background: rgba(212, 255, 61, 0.18);
-  border: 1px solid var(--border-accent);
-  border-radius: 10px;
-  padding: 10px;
+  background: transparent;
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  padding: 12px;
   margin: 0 -4px;
-  box-shadow: 0 0 12px rgba(212, 255, 61, 0.25), inset 0 0 0 1px rgba(212,255,61,0.1);
 }
 .serie-label { font-size: 15px; color: var(--text-secondary); min-width: 56px; padding-top: 2px; flex-shrink: 0; }
 .serie-done-data { color: var(--accent); font-size: 16px; flex: 1; }
@@ -286,7 +285,8 @@ body {
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  background: var(--bg-elev-2);
+  background: transparent;
+  border: 1px solid var(--accent);
   border-radius: 12px;
   padding: 10px 14px;
   min-height: 52px;
