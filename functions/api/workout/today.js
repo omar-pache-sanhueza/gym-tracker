@@ -21,9 +21,9 @@ export async function onRequestGet({ request, env }) {
     }
     allDates.sort((a, b) => a.fecha.localeCompare(b.fecha))
     const proximo = allDates.find(d => d.fecha > today) || null
-    const diasDisponibles = allDates.filter(d => d.fecha >= today)
+    const anterior = [...allDates].reverse().find(d => d.fecha < today) || null
 
-    return Response.json({ tipo: 'descanso', proximo, diasDisponibles })
+    return Response.json({ tipo: 'descanso', proximo, anterior })
   } catch (err) {
     console.error('workout/today:', err)
     return Response.json({ error: err.message || 'Error al leer la planilla.' }, { status: 502 })
