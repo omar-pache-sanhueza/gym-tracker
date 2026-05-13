@@ -432,7 +432,7 @@ Regla de uso del acento: el verde neón se usa con moderación. En una pantalla 
 
 **RF-07.** Si hoy es un día sin entreno programado, la app debe mostrar el mensaje correspondiente y el próximo entreno previsto, con un botón secundario `Iniciar otro día` que permita elegir manualmente cualquier día programado dentro del mesociclo activo.
 
-**RF-08.** La pantalla de bienestar pre-entreno debe mostrar 5 indicadores calificables de 1 a 5 estrellas: sueño, energía, estrés, salud articular y recuperación muscular. Debe incluir un campo de comentario libre opcional. Los valores deben venir preseleccionados desde la planilla cuando existan; si faltan, usar 3 estrellas como valor neutro.
+**RF-08.** La pantalla de bienestar pre-entreno debe mostrar 5 indicadores calificables de 1 a 5 estrellas: sueño, energía, estrés, salud articular y recuperación muscular. Debe incluir un campo de comentario libre opcional ("Comentario Bienestar:") que inicia vacío. Los indicadores siempre inician en 5 estrellas por defecto. No se muestra nota explicativa bajo ningún indicador.
 
 **RF-09.** El cronómetro general no debe correr mientras se está completando la pantalla de bienestar. Debe arrancar únicamente cuando los 5 indicadores de bienestar estén completos y Omar presione `Iniciar entrenamiento`. Desde ese momento se muestra en formato `HH:MM:SS`, visible permanentemente en el header sticky, y solo se detiene al presionar `Finalizar entrenamiento y enviar`.
 
@@ -575,16 +575,15 @@ Convención: el header sticky mide ~56 pt y respeta `safe-area-inset-top`. El co
 │  ★ ★ ★ ☆ ☆   3/5            │
 │                              │
 │  Estrés                      │
-│  ★ ★ ★ ★ ☆   4/5            │
-│  1 = muy alto · 5 = muy bajo │
+│  ★ ★ ★ ★ ★   5/5            │
 │                              │
 │  Salud articular             │
 │  ★ ★ ★ ★ ★   5/5            │
 │                              │
 │  Recuperación muscular       │
-│  ★ ★ ★ ★ ☆   4/5            │
+│  ★ ★ ★ ★ ★   5/5            │
 │                              │
-│  Comentario bienestar        │
+│  Comentario Bienestar:       │
 │  [                         ] │
 │                              │
 │  [  Iniciar entrenamiento  ] │ ← habilitado al completar bienestar; dispara cronómetro

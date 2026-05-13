@@ -4,20 +4,20 @@ import { useState } from 'preact/hooks'
 const INDICADORES = [
   { key: 'sueno', label: 'Sueño' },
   { key: 'energia', label: 'Energía' },
-  { key: 'estres', label: 'Estrés', nota: '1 = muy alto · 5 = muy bajo' },
+  { key: 'estres', label: 'Estrés' },
   { key: 'saludArticular', label: 'Salud articular' },
   { key: 'recuperacionMuscular', label: 'Recuperación muscular' },
 ]
 
 export default function Bienestar({ sugerido, onDone, onBack }) {
   const [valores, setValores] = useState({
-    sueno: sugerido?.sueno || 3,
-    energia: sugerido?.energia || 3,
-    estres: sugerido?.estres || 3,
-    saludArticular: sugerido?.saludArticular || 3,
-    recuperacionMuscular: sugerido?.recuperacionMuscular || 3,
+    sueno: 5,
+    energia: 5,
+    estres: 5,
+    saludArticular: 5,
+    recuperacionMuscular: 5,
   })
-  const [nota, setNota] = useState(sugerido?.nota || '')
+  const [nota, setNota] = useState('')
 
   return html`
     <div class="screen-padded">
@@ -48,7 +48,7 @@ export default function Bienestar({ sugerido, onDone, onBack }) {
         `)}
 
         <div class="indicador-group">
-          <span class="indicador-label">Comentario bienestar</span>
+          <span class="indicador-label">Comentario Bienestar:</span>
           <textarea
             class="input-field"
             placeholder="Opcional"
