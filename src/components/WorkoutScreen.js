@@ -55,6 +55,13 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
   })
   const [rest, setRest] = useState(null)
   const wakeLockRef = useRef(null)
+  const activeSerieRef = useRef(null)
+
+  function scrollActiveIntoView() {
+    setTimeout(() => {
+      activeSerieRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }, 50)
+  }
   const elapsed = useElapsedSeconds(inicioISO)
 
   // Wake lock
@@ -158,7 +165,7 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
                   ${ej.series.map((serie, serieIdx) => {
                     const isActiveSerie = isSelected && serieIdx === activeSerieIdx
                     return html`
-                      <div class="serie-row ${serie.completada ? 'done' : ''} ${isActiveSerie ? 'active' : ''}">
+                      <div class="serie-row ${serie.completada ? 'done' : ''} ${isActiveSerie ? 'active' : ''}" ref=${isActiveSerie ? activeSerieRef : null}>
                         ${isActiveSerie ? html`
                           <div class="serie-active-block">
                             <div class="serie-active-header">
@@ -276,7 +283,7 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
         <${RestOverlay}
           key=${rest.key}
           secs=${rest.secs}
-          onClose=${() => setRest(null)}
+          onClose=${() => { setRest(null); scrollActiveIntoView() }}
         />
       `}
     </div>
