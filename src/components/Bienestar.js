@@ -8,14 +8,13 @@ const ICON_SUENO = html`
 `
 
 const ICON_MOTIVACION = html`
-  <svg class="indicador-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="M12 2c1 3 4 4 4 8 0 2-1.2 3.5-2.5 3.5-1 0-1.5-.7-1.5-1.5 0-1 .8-1.7.8-3 0-1-.5-2-1.3-2.7C12 8 11 10 11 12c0 .8-.6 1.5-1.5 1.5C8 13.5 7 12 7 10 7 6 11 4 12 2z"/>
-    <path d="M7.5 13.5C6 15 5 16.7 5 18.5A7 7 0 0 0 12 22a7 7 0 0 0 7-3.5c0-1.8-1-3.5-2.5-5"/>
+  <svg class="indicador-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M12 2s1.5 3 1.5 5.5c0 1.4-.9 2.3-2 2.3-.9 0-1.6-.6-1.6-1.6 0-.8.4-1.4.4-2.2 0-1-.6-1.9-1.5-2.5-.6 1.7-1.8 3.2-1.8 5.5 0 1.2.4 2.3 1.1 3.1-1.6.8-2.6 2.5-2.6 4.4 0 3 2.8 5.5 6.5 5.5s6.5-2.5 6.5-5.5c0-2.8-1.6-4.8-3.5-6.3-.5 1.5-1.7 2.3-2.7 2.3-1.3 0-2.3-.9-2.3-2.2 0-2 2-3 2-5.5 0-1-.2-1.9-.5-2.8z"/>
   </svg>
 `
 
 const ICON_ENERGIA = html`
-  <svg class="indicador-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <svg class="indicador-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
     <path d="M13 2 4.5 13.5h6L10 22l9-12h-6l1-8z"/>
   </svg>
 `
@@ -30,20 +29,16 @@ const ICON_ESTRES = html`
 `
 
 const ICON_ARTICULAR = html`
-  <svg class="indicador-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="M7 2c.6 1.4 1.8 2 3 2s2.4-.6 3-2"/>
-    <path d="M9 4v5.5c0 1-.5 1.5-1.2 2L6 13a3 3 0 0 0 0 4l1.8 1.5c.7.5 1.2 1 1.2 2V22"/>
-    <path d="M15 4v5.5c0 1 .5 1.5 1.2 2L18 13a3 3 0 0 1 0 4l-1.8 1.5c-.7.5-1.2 1-1.2 2V22"/>
-    <circle cx="12" cy="15" r="2"/>
+  <svg class="indicador-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M6 2.4c0-.7.9-1 1.4-.4.6.8 1.5 1.2 2.6 1.2s2-.4 2.6-1.2c.5-.6 1.4-.3 1.4.4 0 1.7-.9 3-2.3 3.5.2.8.3 1.6.3 2.5 0 1.2.4 1.9 1.4 2.6L15 12.4a3.6 3.6 0 0 1 0 5.7l-1.6 1.3c-1 .7-1.4 1.4-1.4 2.6v.5c0 .8-1.2.8-1.2 0v-.5c0-1.6.6-2.7 1.8-3.6l1.6-1.3a2.2 2.2 0 0 0 0-3.5L12.6 12c-1.2-.9-1.8-2-1.8-3.6 0-.7-.1-1.4-.3-2-.1 0-.3 0-.5.1-1.7 0-3.2-.8-4-2.1z"/>
+    <circle cx="9.7" cy="14.5" r="2.8"/>
+    <path d="M3 14c0-.5.4-.9.9-.9h.6c.5 0 .9.4.9.9s-.4.9-.9.9h-.6c-.5 0-.9-.4-.9-.9z"/>
   </svg>
 `
 
 const ICON_RECUPERACION = html`
-  <svg class="indicador-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="M3 13c0-1.5 1-3 3-3h2c0-2 1.5-4 4-4 3 0 5 2 5 5 0 1.5-.5 2.5-1.5 3.5"/>
-    <path d="M3 13c0 2 1.5 3.5 3.5 3.5 1.5 0 2.5-.8 3.2-2 .5 1 1.5 1.5 2.8 1.5 2 0 3.5-1.5 3.5-3.5"/>
-    <path d="M16 14c1.5.5 3 1.5 3 4 0 1.5-1 3-3 3-1.5 0-3-1-3-3"/>
-    <path d="M13 18h-3"/>
+  <svg class="indicador-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M3.5 11.3c-.3-.5-.5-1-.5-1.6 0-1.3 1.1-2.4 2.4-2.4.6 0 1.2.2 1.6.6V6.5C7 4.6 8.6 3 10.5 3c1.4 0 2.6.8 3.2 2 .5-.3 1.1-.5 1.8-.5 1.9 0 3.5 1.6 3.5 3.5 0 .5-.1 1-.3 1.4 1 .6 1.6 1.7 1.6 2.9 0 1.7-1.2 3.1-2.8 3.4-.3 1.7-1.8 3-3.6 3-.8 0-1.6-.3-2.2-.7l-.9 1c-.5.6-1.2.9-2 .9-1.5 0-2.7-1.2-2.7-2.7 0-.4.1-.8.3-1.2-1.4-.5-2.4-1.8-2.4-3.3 0-.7.2-1.3.5-1.9-.4-.4-.5-1-.5-1.5z"/>
   </svg>
 `
 
