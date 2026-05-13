@@ -6,7 +6,7 @@ const emoji = (char) => html`<span class="indicador-icon indicador-icon-emoji" a
 const ICON_SUENO = emoji('🌙')
 const ICON_MOTIVACION = emoji('✨')
 const ICON_ENERGIA = emoji('⚡')
-const ICON_ESTRES = emoji('🧠')
+const ICON_ESTRES = emoji('✌️')
 const ICON_ARTICULAR = emoji('🦴')
 const ICON_RECUPERACION = emoji('💪')
 
