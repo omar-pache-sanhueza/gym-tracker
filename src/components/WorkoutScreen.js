@@ -264,7 +264,7 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
         })}
 
         ${allDone && html`
-          <button class="btn-primary" style="margin-top:24px" onClick=${handleFinish}>
+          <button class="btn-primary" style="margin-top:24px;flex-shrink:0" onClick=${handleFinish}>
             Finalizar sesión
           </button>
         `}
