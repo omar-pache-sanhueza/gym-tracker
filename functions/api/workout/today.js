@@ -23,10 +23,7 @@ export async function onRequestGet({ env }) {
     return Response.json({ tipo: 'descanso', proximo })
   } catch (err) {
     console.error('workout/today:', err)
-    const keySnippet = env.GOOGLE_SHEETS_API_KEY
-      ? `key[0..7]=${env.GOOGLE_SHEETS_API_KEY.slice(0, 8)} len=${env.GOOGLE_SHEETS_API_KEY.length}`
-      : 'key=UNDEFINED'
-    return Response.json({ error: `${err.message} | ${keySnippet}` }, { status: 502 })
+    return Response.json({ error: err.message || 'Error al leer la planilla.' }, { status: 502 })
   }
 }
 

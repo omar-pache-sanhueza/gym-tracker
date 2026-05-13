@@ -74,7 +74,7 @@ export function findAllDatesInSheet(values, mesocicloName) {
     for (let rowIdx = 1; rowIdx < values.length; rowIdx++) {
       const cell = String((values[rowIdx] || [])[weekCol] || '')
       const dayInfo = parseDayHeader(cell)
-      if (dayInfo) results.push({ fecha: dayInfo.fecha, diaNumero: dayInfo.diaNumero, diaNombre: dayInfo.diaNombre, mesociclo: mesocicloName })
+      if (dayInfo) results.push({ fecha: dayInfo.date, diaNumero: dayInfo.diaNumero, diaNombre: dayInfo.diaNombre, mesociclo: mesocicloName })
     }
   }
 
