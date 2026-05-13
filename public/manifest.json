@@ -1,6 +1,6 @@
 {
-  "name": "Gym Tracker",
-  "short_name": "Gym",
+  "name": "GymTracker",
+  "short_name": "GymTracker",
   "description": "Seguimiento personal de entrenamientos",
   "start_url": "/",
   "display": "standalone",
