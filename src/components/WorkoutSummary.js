@@ -1,6 +1,46 @@
 import { html } from 'htm/preact'
 import { useState } from 'preact/hooks'
 
+function DebugWebhookButton() {
+  const [loading, setLoading] = useState(false)
+  const [trace, setTrace] = useState(null)
+
+  async function run() {
+    setLoading(true); setTrace(null)
+    try {
+      const res = await fetch('/api/debug/test-webhook', { credentials: 'same-origin' })
+      setTrace(await res.json())
+    } catch (err) {
+      setTrace({ ok: false, error: String(err.message || err) })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return html`
+    <div style="margin-top:16px">
+      <button class="btn-secondary" style="width:100%" onClick=${run} disabled=${loading}>
+        ${loading ? 'Probando...' : 'Probar webhook'}
+      </button>
+      ${trace && html`
+        <pre style="
+          margin-top:12px;
+          background:var(--bg-elev-1);
+          border:1px solid var(--border-subtle);
+          border-radius:8px;
+          padding:10px;
+          font-size:11px;
+          color:${trace.ok ? 'var(--accent)' : 'var(--danger)'};
+          white-space:pre-wrap;
+          word-break:break-all;
+          max-height:60vh;
+          overflow:auto;
+        ">${JSON.stringify(trace, null, 2)}</pre>
+      `}
+    </div>
+  `
+}
+
 export default function WorkoutSummary({ workout, onStart, onLogout, onSelectDay }) {
   const [showPicker, setShowPicker] = useState(false)
 
@@ -41,6 +81,7 @@ export default function WorkoutSummary({ workout, onStart, onLogout, onSelectDay
               `)}
             </div>
           `}
+          <${DebugWebhookButton} />
         </div>
       </div>
     `
@@ -77,6 +118,8 @@ export default function WorkoutSummary({ workout, onStart, onLogout, onSelectDay
           `
         })}
       </div>
+
+      <${DebugWebhookButton} />
 
       <div class="screen-bottom">
         <button class="btn-primary" onClick=${onStart}>Comenzar entrenamiento</button>
