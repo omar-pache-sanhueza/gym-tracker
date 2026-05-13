@@ -436,7 +436,7 @@ Regla de uso del acento: el verde neón se usa con moderación. En una pantalla 
 
 **RF-09.** El cronómetro general no debe correr mientras se está completando la pantalla de bienestar. Debe arrancar únicamente cuando los 5 indicadores de bienestar estén completos y Omar presione `Iniciar entrenamiento`. Desde ese momento se muestra en formato `HH:MM:SS`, visible permanentemente en el header sticky, y solo se detiene al presionar `Finalizar entrenamiento y enviar`.
 
-**RF-10.** Cada ejercicio debe renderizarse con su orden, nombre, comentario opcional y tantas filas de **serie** como indique la planilla. La interfaz debe usar `Serie 1`, `Serie 2`, etc.; nunca `Set 1` ni `set`.
+**RF-10.** Cada ejercicio debe renderizarse con su orden, nombre, comentario opcional y tantas filas de **serie** como indique la planilla. La interfaz debe usar `Serie 1`, `Serie 2`, etc.; nunca `Set 1` ni `set`. El usuario puede tocar cualquier tarjeta de ejercicio incompleto para seleccionarlo y ejecutarlo fuera del orden programado; al terminar ese ejercicio, el sistema auto-avanza al ejercicio incompleto de menor índice.
 
 **RF-11.** Cada serie debe mostrar, en este orden lógico: número de serie, repeticiones programadas/editables, intensidad programada en formato `@ RPE N` (1–10), peso sugerido editable y descanso prescrito para esa serie.
 

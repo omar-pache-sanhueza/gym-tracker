@@ -21,6 +21,10 @@ function vibrate() {
   try { navigator.vibrate([100, 100, 200]) } catch {}
 }
 
+function firstIncomplete(ejercicios) {
+  return ejercicios.findIndex(ej => !ej.series.every(s => s.completada))
+}
+
 function initEjercicios(workout) {
   return workout.ejercicios.map(ej => ({
     orden: ej.orden,
@@ -44,7 +48,12 @@ function initEjercicios(workout) {
 
 export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onDone, onSave, onLogout }) {
   const [ejercicios, setEjercicios] = useState(() => savedEjercicios || initEjercicios(workout))
-  const [rest, setRest] = useState(null) // { secs, key }
+  const [selectedEjIdx, setSelectedEjIdx] = useState(() => {
+    const base = savedEjercicios || initEjercicios(workout)
+    const idx = firstIncomplete(base)
+    return idx >= 0 ? idx : 0
+  })
+  const [rest, setRest] = useState(null)
   const wakeLockRef = useRef(null)
   const elapsed = useElapsedSeconds(inicioISO)
 
@@ -62,11 +71,19 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
     }
   }, [])
 
-  // Persistir en localStorage tras cada cambio
+  // Persistir tras cada cambio
   useEffect(() => { onSave?.(ejercicios) }, [ejercicios])
 
-  const activeEjIdx = ejercicios.findIndex(ej => !ej.series.every(s => s.completada))
-  const allDone = activeEjIdx === -1
+  // Auto-avanzar al ejercicio incompleto de menor índice cuando el seleccionado termina
+  useEffect(() => {
+    const sel = ejercicios[selectedEjIdx]
+    if (sel && sel.series.every(s => s.completada)) {
+      const next = firstIncomplete(ejercicios)
+      if (next >= 0) setSelectedEjIdx(next)
+    }
+  }, [ejercicios])
+
+  const allDone = firstIncomplete(ejercicios) === -1
 
   function updateSerie(ejIdx, serieIdx, updates) {
     setEjercicios(prev => prev.map((ej, ei) =>
@@ -114,22 +131,32 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
 
       <div class="workout-content">
         ${ejercicios.map((ej, ejIdx) => {
-          const isActive = ejIdx === activeEjIdx
+          const isSelected = ejIdx === selectedEjIdx
           const isDone = ej.series.every(s => s.completada)
-          const activeSerieIdx = isActive ? ej.series.findIndex(s => !s.completada) : -1
+          const isIncomplete = !isDone && !isSelected
+          const activeSerieIdx = isSelected ? ej.series.findIndex(s => !s.completada) : -1
 
           return html`
-            <div class="exercise-card ${isActive ? 'active' : ''} ${isDone ? 'done' : ''}">
+            <div
+              class="exercise-card ${isSelected ? 'active' : ''} ${isDone ? 'done' : ''}"
+              style=${isIncomplete ? 'cursor:pointer' : ''}
+              onClick=${isIncomplete ? () => setSelectedEjIdx(ejIdx) : undefined}
+            >
               <div class="exercise-card-header">
                 <span class="exercise-num">${ej.orden}.</span>
                 <span class="exercise-name">${ej.nombre}</span>
-                ${isDone && html`<span class="exercise-done-check">✓</span>`}
+                ${isDone
+                  ? html`<span class="exercise-done-check">✓</span>`
+                  : isIncomplete
+                    ? html`<span style="color:var(--text-tertiary);font-size:12px">Toca para ir aquí</span>`
+                    : null
+                }
               </div>
 
-              ${(isActive || isDone) && html`
+              ${(isSelected || isDone) && html`
                 <div class="series-list">
                   ${ej.series.map((serie, serieIdx) => {
-                    const isActiveSerie = isActive && serieIdx === activeSerieIdx
+                    const isActiveSerie = isSelected && serieIdx === activeSerieIdx
                     return html`
                       <div class="serie-row ${serie.completada ? 'done' : ''} ${isActiveSerie ? 'active' : ''}">
                         <span class="serie-label">Serie ${serie.numero}</span>
