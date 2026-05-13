@@ -1,0 +1,159 @@
+:root {
+  --bg-base: #0A0A0A;
+  --bg-elev-1: #141414;
+  --bg-elev-2: #1F1F1F;
+  --bg-elev-3: #2A2A2A;
+  --accent: #39FF14;
+  --accent-dim: #2BB80F;
+  --accent-soft: rgba(57, 255, 20, 0.12);
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0A0A0;
+  --text-tertiary: #6B6B6B;
+  --danger: #FF453A;
+  --warning: #FFD60A;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-accent: rgba(57, 255, 20, 0.4);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  min-height: 100%;
+  -webkit-font-smoothing: antialiased;
+}
+
+#app {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* Pantalla centrada (login) */
+.screen-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 16px;
+  padding-top: calc(16px + env(safe-area-inset-top));
+  padding-bottom: calc(16px + env(safe-area-inset-bottom));
+}
+
+.login-box {
+  width: 100%;
+  max-width: 382px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.login-logo {
+  text-align: center;
+}
+
+.login-logo-icon {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.login-logo h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+}
+
+/* Input */
+.input-field {
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-size: 16px;
+  padding: 16px;
+  width: 100%;
+  outline: none;
+  transition: border-color 200ms ease-out;
+  -webkit-appearance: none;
+}
+
+.input-field:focus {
+  border-color: var(--accent);
+}
+
+.input-field::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* Botón primario */
+.btn-primary {
+  background: var(--accent);
+  border: none;
+  border-radius: 12px;
+  color: #0A0A0A;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  height: 56px;
+  width: 100%;
+  transition: background 150ms ease-out;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-primary:active {
+  background: var(--accent-dim);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Botón secundario */
+.btn-secondary {
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  color: var(--text-primary);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 400;
+  height: 48px;
+  width: 100%;
+  transition: border-color 150ms ease-out;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-secondary:active {
+  border-color: var(--border-accent);
+}
+
+/* Mensajes */
+.msg-error {
+  color: var(--danger);
+  font-size: 14px;
+  text-align: center;
+}
+
+.msg-secondary {
+  color: var(--text-secondary);
+  font-size: 13px;
+  text-align: center;
+}
