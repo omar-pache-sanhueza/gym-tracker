@@ -112,7 +112,8 @@ export async function sendEmail(sesion, env) {
     htmlBody: buildEmailHtml(sesion),
   }
 
-  const sig = await computeHmac(JSON.stringify(payload), env.APPS_SCRIPT_SECRET)
+  const payloadStr = JSON.stringify(payload)
+  const sig = await computeHmac(payloadStr, env.APPS_SCRIPT_SECRET)
 
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), 25_000)
@@ -121,7 +122,7 @@ export async function sendEmail(sesion, env) {
     const res = await fetch(env.APPS_SCRIPT_WEBHOOK, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ payload, sig }),
+      body: JSON.stringify({ payload: payloadStr, sig }),
       signal: controller.signal,
     })
     clearTimeout(timer)

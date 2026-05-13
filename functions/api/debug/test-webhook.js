@@ -64,7 +64,7 @@ export async function onRequestGet({ env, request }) {
     const res = await fetch(webhook, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ payload, sig }),
+      body: JSON.stringify({ payload: message, sig }),
     })
     status = res.status
     bodyText = await res.text()
