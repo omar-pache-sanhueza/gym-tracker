@@ -66,19 +66,16 @@ export default function Bienestar({ sugerido, onDone, onBack }) {
     <div class="screen-padded">
       <header class="screen-header">
         <button class="btn-ghost" onClick=${onBack}>← Volver</button>
-        <h2 class="screen-header-title">Bienestar pre-entreno</h2>
+        <h2 class="screen-header-title">Bienestar de hoy</h2>
       </header>
 
       <div class="bienestar-form">
         ${INDICADORES.map(ind => html`
-          <div class="indicador-group">
-            <div class="indicador-label-row">
-              <span class="indicador-label-wrap">
-                ${ind.icon}
-                <span class="indicador-label">${ind.label}</span>
-              </span>
-              <span class="indicador-value">${valores[ind.key]}/5</span>
-            </div>
+          <div class="indicador-row">
+            <span class="indicador-label-wrap">
+              ${ind.icon}
+              <span class="indicador-label">${ind.label}</span>
+            </span>
             <div class="stars-row" role="group" aria-label=${ind.label}>
               ${[1, 2, 3, 4, 5].map(n => html`
                 <button
