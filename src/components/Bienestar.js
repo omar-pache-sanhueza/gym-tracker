@@ -2,43 +2,48 @@ import { html } from 'htm/preact'
 import { useState } from 'preact/hooks'
 
 const ICON_SUENO = html`
-  <svg class="indicador-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+  <svg class="indicador-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M20 14.5A8 8 0 0 1 9.5 4a.6.6 0 0 0-.8-.75A9 9 0 1 0 20.75 15.3a.6.6 0 0 0-.75-.8z"/>
   </svg>
 `
 
 const ICON_MOTIVACION = html`
-  <svg class="indicador-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="M12 2l2.39 5.35L20 8.27l-4 4.16.94 5.78L12 15.6 7.06 18.21 8 12.43 4 8.27l5.61-.92L12 2z"/>
-    <path d="M12 15.6V22"/>
+  <svg class="indicador-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M12 2c1 3 4 4 4 8 0 2-1.2 3.5-2.5 3.5-1 0-1.5-.7-1.5-1.5 0-1 .8-1.7.8-3 0-1-.5-2-1.3-2.7C12 8 11 10 11 12c0 .8-.6 1.5-1.5 1.5C8 13.5 7 12 7 10 7 6 11 4 12 2z"/>
+    <path d="M7.5 13.5C6 15 5 16.7 5 18.5A7 7 0 0 0 12 22a7 7 0 0 0 7-3.5c0-1.8-1-3.5-2.5-5"/>
   </svg>
 `
 
 const ICON_ENERGIA = html`
-  <svg class="indicador-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+  <svg class="indicador-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M13 2 4.5 13.5h6L10 22l9-12h-6l1-8z"/>
   </svg>
 `
 
 const ICON_ESTRES = html`
-  <svg class="indicador-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="M9 3a3.5 3.5 0 0 0-3.5 3.5c0 .4.07.78.2 1.13A3.5 3.5 0 0 0 4 11a3.5 3.5 0 0 0 1.5 2.87V15a3 3 0 0 0 3 3 3 3 0 0 0 3-3V5.5A2.5 2.5 0 0 0 9 3z"/>
-    <path d="M15 3a3.5 3.5 0 0 1 3.5 3.5c0 .4-.07.78-.2 1.13A3.5 3.5 0 0 1 20 11a3.5 3.5 0 0 1-1.5 2.87V15a3 3 0 0 1-3 3 3 3 0 0 1-3-3V5.5A2.5 2.5 0 0 1 15 3z"/>
-    <path d="M9 8.5h1.5M15 8.5h-1.5M9 12h1.5M15 12h-1.5"/>
+  <svg class="indicador-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M12 3a4 4 0 0 0-4 4v.5A3 3 0 0 0 6 13a3 3 0 0 0 1.5 2.6V17a3 3 0 0 0 4.5 2.6"/>
+    <path d="M12 3a4 4 0 0 1 4 4v.5A3 3 0 0 1 18 13a3 3 0 0 1-1.5 2.6V17a3 3 0 0 1-4.5 2.6"/>
+    <path d="M12 3v17"/>
+    <path d="M9 8h1M14 8h1M9 12h1M14 12h1"/>
   </svg>
 `
 
 const ICON_ARTICULAR = html`
   <svg class="indicador-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="M6 3.5a2.5 2.5 0 0 1 4.6-1.36A2.5 2.5 0 0 1 14.5 4 2.5 2.5 0 0 1 13 6.3v2.2c0 .9.4 1.7 1.1 2.2.9.7 1.4 1.8 1.4 2.9v.8a2.5 2.5 0 0 1-3.9 2.06A2.5 2.5 0 0 1 8 14.4v-.8c0-1.1.5-2.2 1.4-2.9.7-.5 1.1-1.3 1.1-2.2V6.3A2.5 2.5 0 0 1 9 4a2.5 2.5 0 0 1-3-.5z"/>
-    <path d="M9 17l-2 4M15 17l2 4"/>
+    <path d="M7 2c.6 1.4 1.8 2 3 2s2.4-.6 3-2"/>
+    <path d="M9 4v5.5c0 1-.5 1.5-1.2 2L6 13a3 3 0 0 0 0 4l1.8 1.5c.7.5 1.2 1 1.2 2V22"/>
+    <path d="M15 4v5.5c0 1 .5 1.5 1.2 2L18 13a3 3 0 0 1 0 4l-1.8 1.5c-.7.5-1.2 1-1.2 2V22"/>
+    <circle cx="12" cy="15" r="2"/>
   </svg>
 `
 
 const ICON_RECUPERACION = html`
   <svg class="indicador-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="M3 14c2 0 3-1 3-3V8a2 2 0 0 1 4 0v2c2 .5 3.5 2 4 4 .4 1.6-.2 3.3-1.5 4.3-1.4 1-3.2.9-4.5-.3-1-1-2.4-1.5-3.5-1.5H3z"/>
-    <path d="M14 11c2 0 3 1 3 3M17 9v6"/>
+    <path d="M3 13c0-1.5 1-3 3-3h2c0-2 1.5-4 4-4 3 0 5 2 5 5 0 1.5-.5 2.5-1.5 3.5"/>
+    <path d="M3 13c0 2 1.5 3.5 3.5 3.5 1.5 0 2.5-.8 3.2-2 .5 1 1.5 1.5 2.8 1.5 2 0 3.5-1.5 3.5-3.5"/>
+    <path d="M16 14c1.5.5 3 1.5 3 4 0 1.5-1 3-3 3-1.5 0-3-1-3-3"/>
+    <path d="M13 18h-3"/>
   </svg>
 `
 
