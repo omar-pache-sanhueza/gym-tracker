@@ -240,10 +240,10 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
                           <span class="stepper-label">RPE del ejercicio</span>
                           <div class="stepper">
                             <button type="button" class="stepper-btn"
-                              onClick=${() => updateEjercicio(ejIdx, { rpeEjercicio: Math.max(1, ej.rpeEjercicio - 1) })}>−</button>
-                            <span class="stepper-value">${ej.rpeEjercicio}</span>
+                              onClick=${() => updateEjercicio(ejIdx, { rpeEjercicio: Math.max(1, ej.rpeEjercicio - 0.5) })}>−</button>
+                            <span class="stepper-value">${String(ej.rpeEjercicio).replace('.', ',')}</span>
                             <button type="button" class="stepper-btn"
-                              onClick=${() => updateEjercicio(ejIdx, { rpeEjercicio: Math.min(10, ej.rpeEjercicio + 1) })}>+</button>
+                              onClick=${() => updateEjercicio(ejIdx, { rpeEjercicio: Math.min(10, ej.rpeEjercicio + 0.5) })}>+</button>
                           </div>
                         </div>
                       `}

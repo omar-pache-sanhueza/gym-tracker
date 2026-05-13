@@ -24,14 +24,14 @@ export default function FinishScreen({ sesionData, onSubmit, loading, error }) {
       <div class="finish-section">
         <div class="rpe-header-row">
           <span class="finish-label">RPE general del día</span>
-          <span class="rpe-big-value">${rpe}</span>
+          <span class="rpe-big-value">${String(rpe).replace('.', ',')}</span>
         </div>
         <input
           type="range"
           class="rpe-slider"
-          min="1" max="10" step="1"
+          min="1" max="10" step="0.5"
           value=${rpe}
-          onInput=${e => setRpe(parseInt(e.target.value))}
+          onInput=${e => setRpe(parseFloat(e.target.value))}
         />
         <div class="rpe-marks"><span>1</span><span>10</span></div>
       </div>
