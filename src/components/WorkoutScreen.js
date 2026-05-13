@@ -1,0 +1,253 @@
+import { html } from 'htm/preact'
+import { useState, useEffect, useRef } from 'preact/hooks'
+import { useElapsedSeconds, useCountdown, fmtHMS, fmtMS } from '../lib/timer.js'
+
+function playBeep() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)()
+    const osc = ctx.createOscillator()
+    const gain = ctx.createGain()
+    osc.connect(gain)
+    gain.connect(ctx.destination)
+    osc.frequency.value = 880
+    gain.gain.setValueAtTime(0.3, ctx.currentTime)
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4)
+    osc.start()
+    osc.stop(ctx.currentTime + 0.4)
+  } catch {}
+}
+
+function vibrate() {
+  try { navigator.vibrate([100, 100, 200]) } catch {}
+}
+
+function initEjercicios(workout) {
+  return workout.ejercicios.map(ej => ({
+    orden: ej.orden,
+    nombre: ej.nombre,
+    comentario: ej.comentarioSugerido || '',
+    series: ej.seriesProgramadas.map(s => ({
+      numero: s.numero,
+      reps: typeof s.repeticionesProgramadas === 'string'
+        ? (parseInt(s.repeticionesProgramadas) || 1)
+        : (s.repeticionesProgramadas || 1),
+      rpeProgramado: s.rpeProgramado,
+      pesoKg: s.pesoSugeridoKg,
+      esPesoCorporal: s.pesoSugeridoKg === null,
+      descansoPrescritoSeg: s.descansoPrescritoSeg,
+      completada: false,
+      completadoEn: null,
+    })),
+  }))
+}
+
+export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onDone, onSave, onLogout }) {
+  const [ejercicios, setEjercicios] = useState(() => savedEjercicios || initEjercicios(workout))
+  const [rest, setRest] = useState(null) // { secs, key }
+  const wakeLockRef = useRef(null)
+  const elapsed = useElapsedSeconds(inicioISO)
+
+  // Wake lock
+  useEffect(() => {
+    const acquire = async () => {
+      try { wakeLockRef.current = await navigator.wakeLock.request('screen') } catch {}
+    }
+    acquire()
+    const onVisible = () => { if (!document.hidden && !wakeLockRef.current) acquire() }
+    document.addEventListener('visibilitychange', onVisible)
+    return () => {
+      wakeLockRef.current?.release()
+      document.removeEventListener('visibilitychange', onVisible)
+    }
+  }, [])
+
+  // Persistir en localStorage tras cada cambio
+  useEffect(() => { onSave?.(ejercicios) }, [ejercicios])
+
+  const activeEjIdx = ejercicios.findIndex(ej => !ej.series.every(s => s.completada))
+  const allDone = activeEjIdx === -1
+
+  function updateSerie(ejIdx, serieIdx, updates) {
+    setEjercicios(prev => prev.map((ej, ei) =>
+      ei !== ejIdx ? ej : {
+        ...ej,
+        series: ej.series.map((s, si) => si !== serieIdx ? s : { ...s, ...updates }),
+      }
+    ))
+  }
+
+  function updateEjercicio(ejIdx, updates) {
+    setEjercicios(prev => prev.map((ej, ei) => ei !== ejIdx ? ej : { ...ej, ...updates }))
+  }
+
+  function handleSerieDone(ejIdx, serieIdx) {
+    const desc = ejercicios[ejIdx].series[serieIdx].descansoPrescritoSeg
+    updateSerie(ejIdx, serieIdx, { completada: true, completadoEn: new Date().toISOString() })
+    setRest({ secs: desc, key: `${ejIdx}-${serieIdx}` })
+  }
+
+  function handleFinish() {
+    onDone(ejercicios.map(ej => ({
+      orden: ej.orden,
+      nombre: ej.nombre,
+      series: ej.series.map(s => ({
+        numero: s.numero,
+        reps: s.reps,
+        rpeProgramado: s.rpeProgramado,
+        pesoKg: s.esPesoCorporal ? null : s.pesoKg,
+        descansoPrescritoSeg: s.descansoPrescritoSeg,
+        completadoEn: s.completadoEn || new Date().toISOString(),
+      })),
+      comentario: ej.comentario,
+    })))
+  }
+
+  return html`
+    <div class="screen-workout">
+      <header class="workout-header">
+        <span class="workout-timer">${fmtHMS(elapsed)}</span>
+        <span class="workout-header-day">D${workout.diaNumero} ${workout.diaNombre}</span>
+        <button class="btn-ghost small" onClick=${onLogout}>Salir</button>
+      </header>
+
+      <div class="workout-content">
+        ${ejercicios.map((ej, ejIdx) => {
+          const isActive = ejIdx === activeEjIdx
+          const isDone = ej.series.every(s => s.completada)
+          const activeSerieIdx = isActive ? ej.series.findIndex(s => !s.completada) : -1
+          const todasSeriesHechas = isActive && activeSerieIdx === -1
+
+          return html`
+            <div class="exercise-card ${isActive ? 'active' : ''} ${isDone ? 'done' : ''}">
+              <div class="exercise-card-header">
+                <span class="exercise-num">${ej.orden}.</span>
+                <span class="exercise-name">${ej.nombre}</span>
+                ${isDone && html`<span class="exercise-done-check">✓</span>`}
+              </div>
+
+              ${(isActive || isDone) && html`
+                <div class="series-list">
+                  ${ej.series.map((serie, serieIdx) => {
+                    const isActiveSerie = isActive && serieIdx === activeSerieIdx
+                    return html`
+                      <div class="serie-row ${serie.completada ? 'done' : ''} ${isActiveSerie ? 'active' : ''}">
+                        <span class="serie-label">Serie ${serie.numero}</span>
+
+                        ${serie.completada ? html`
+                          <span class="serie-done-data">
+                            ${serie.reps} reps
+                            ${serie.rpeProgramado != null ? html` <span class="rpe-badge">@ RPE${serie.rpeProgramado}</span>` : ''}
+                            ${!serie.esPesoCorporal && serie.pesoKg != null ? html` · ${serie.pesoKg} kg` : ''}
+                            ${serie.esPesoCorporal ? html` · peso corporal` : ''}
+                          </span>
+                          <span class="serie-check">✓</span>
+                        ` : isActiveSerie ? html`
+                          <div class="serie-active-content">
+                            <div class="serie-inputs-row">
+                              <div class="stepper-group">
+                                <span class="stepper-label">Reps</span>
+                                <div class="stepper">
+                                  <button type="button" class="stepper-btn"
+                                    onClick=${() => updateSerie(ejIdx, serieIdx, { reps: Math.max(1, serie.reps - 1) })}>−</button>
+                                  <span class="stepper-value">${serie.reps}</span>
+                                  <button type="button" class="stepper-btn"
+                                    onClick=${() => updateSerie(ejIdx, serieIdx, { reps: serie.reps + 1 })}>+</button>
+                                </div>
+                              </div>
+
+                              ${!serie.esPesoCorporal && html`
+                                <div class="stepper-group">
+                                  <span class="stepper-label">kg</span>
+                                  <div class="stepper">
+                                    <button type="button" class="stepper-btn"
+                                      onClick=${() => updateSerie(ejIdx, serieIdx, { pesoKg: Math.max(0, (serie.pesoKg || 0) - 2.5) })}>−</button>
+                                    <span class="stepper-value">${serie.pesoKg ?? 0}</span>
+                                    <button type="button" class="stepper-btn"
+                                      onClick=${() => updateSerie(ejIdx, serieIdx, { pesoKg: (serie.pesoKg || 0) + 2.5 })}>+</button>
+                                  </div>
+                                </div>
+                              `}
+                            </div>
+                            <div class="serie-meta-row">
+                              ${serie.rpeProgramado != null && html`<span class="rpe-badge">@ RPE${serie.rpeProgramado}</span>`}
+                              ${serie.esPesoCorporal && html`<span class="rpe-badge">peso corporal</span>`}
+                              <span class="descanso-info">Desc: ${fmtMS(serie.descansoPrescritoSeg)}</span>
+                            </div>
+                            <button
+                              type="button"
+                              class="btn-secondary"
+                              style="width:100%;margin-top:8px"
+                              onClick=${() => handleSerieDone(ejIdx, serieIdx)}
+                            >Hecho</button>
+                          </div>
+                        ` : html`
+                          <span class="serie-pending-data">
+                            ${serie.reps} reps
+                            ${serie.rpeProgramado != null ? ` @ RPE${serie.rpeProgramado}` : ''}
+                            ${!serie.esPesoCorporal && serie.pesoKg != null ? ` · ${serie.pesoKg} kg` : ''}
+                          </span>
+                        `}
+                      </div>
+                    `
+                  })}
+
+                  ${todasSeriesHechas && html`
+                    <textarea
+                      class="input-field"
+                      placeholder="Comentario del ejercicio (opcional)"
+                      value=${ej.comentario}
+                      onInput=${e => updateEjercicio(ejIdx, { comentario: e.target.value })}
+                      rows="2"
+                      style="margin-top:12px;resize:none"
+                    />
+                  `}
+                </div>
+              `}
+            </div>
+          `
+        })}
+
+        ${allDone && html`
+          <button class="btn-primary" style="margin-top:24px" onClick=${handleFinish}>
+            Finalizar sesión
+          </button>
+        `}
+
+        <div style="height:32px"></div>
+      </div>
+
+      ${rest && html`
+        <${RestOverlay}
+          key=${rest.key}
+          secs=${rest.secs}
+          onClose=${() => setRest(null)}
+        />
+      `}
+    </div>
+  `
+}
+
+function RestOverlay({ secs, onClose }) {
+  const cd = useCountdown(secs)
+
+  useEffect(() => {
+    if (cd.done) {
+      vibrate()
+      playBeep()
+    }
+  }, [cd.done])
+
+  return html`
+    <div class="rest-overlay">
+      <p class="rest-title">Descanso</p>
+      <div class="rest-timer ${cd.done ? 'blink' : ''}">${fmtMS(cd.secs)}</div>
+      <div class="rest-actions">
+        <button class="btn-secondary" onClick=${onClose}>Saltar</button>
+        <button class="btn-secondary" onClick=${cd.paused ? cd.resume : cd.pause}>
+          ${cd.paused ? 'Reanudar' : 'Pausa'}
+        </button>
+        <button class="btn-secondary" onClick=${() => cd.add(30)}>+30s</button>
+      </div>
+    </div>
+  `
+}
