@@ -163,7 +163,7 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
                           <div class="serie-active-block">
                             <div class="serie-active-header">
                               <span class="serie-active-title">Serie ${serie.numero}</span>
-                              <span class="serie-active-total">De ${ej.series.length} series</span>
+                              <span class="serie-active-total">de ${ej.series.length}</span>
                             </div>
 
                             <div class="serie-field">
