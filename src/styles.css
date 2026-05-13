@@ -4,16 +4,16 @@
   --bg-elev-1: #141414;
   --bg-elev-2: #1F1F1F;
   --bg-elev-3: #2A2A2A;
-  --accent: #39FF14;
-  --accent-dim: #2BB80F;
-  --accent-soft: rgba(57, 255, 20, 0.12);
+  --accent: #D4FF3D;
+  --accent-dim: #B8E028;
+  --accent-soft: rgba(212, 255, 61, 0.12);
   --text-primary: #FFFFFF;
   --text-secondary: #A0A0A0;
   --text-tertiary: #6B6B6B;
   --danger: #FF453A;
   --warning: #FFD60A;
   --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-accent: rgba(57, 255, 20, 0.4);
+  --border-accent: rgba(212, 255, 61, 0.45);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -179,7 +179,7 @@ body {
   gap: 10px;
 }
 .indicador-label-wrap { display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1; }
-.indicador-icon { width: 20px; height: 20px; color: var(--accent); flex-shrink: 0; filter: drop-shadow(0 0 4px rgba(57,255,20,0.5)); }
+.indicador-icon { width: 20px; height: 20px; color: var(--accent); flex-shrink: 0; filter: drop-shadow(0 0 4px rgba(212,255,61,0.5)); }
 .indicador-label { font-size: 15px; font-weight: 500; }
 .indicador-value { color: var(--accent); font-size: 14px; font-weight: 600; }
 .indicador-nota { color: var(--text-tertiary); font-size: 13px; }
@@ -261,12 +261,12 @@ body {
   flex-wrap: wrap;
 }
 .serie-row.active {
-  background: rgba(57, 255, 20, 0.18);
+  background: rgba(212, 255, 61, 0.18);
   border: 1px solid var(--border-accent);
   border-radius: 10px;
   padding: 10px;
   margin: 0 -4px;
-  box-shadow: 0 0 12px rgba(57, 255, 20, 0.25), inset 0 0 0 1px rgba(57,255,20,0.1);
+  box-shadow: 0 0 12px rgba(212, 255, 61, 0.25), inset 0 0 0 1px rgba(212,255,61,0.1);
 }
 .serie-label { font-size: 15px; color: var(--text-secondary); min-width: 56px; padding-top: 2px; flex-shrink: 0; }
 .serie-done-data { color: var(--accent); font-size: 16px; flex: 1; }
