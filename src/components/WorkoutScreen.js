@@ -305,11 +305,11 @@ function RestOverlay({ secs, onClose }) {
       <p class="rest-title">Descanso</p>
       <div class="rest-timer ${cd.done ? 'blink' : ''}">${fmtMS(cd.secs)}</div>
       <div class="rest-actions">
-        <button class="btn-secondary" onClick=${onClose}>Saltar</button>
+        <button class="btn-secondary" onClick=${() => cd.add(30)}>+30s</button>
         <button class="btn-secondary" onClick=${cd.paused ? cd.resume : cd.pause}>
           ${cd.paused ? 'Reanudar' : 'Pausa'}
         </button>
-        <button class="btn-secondary" onClick=${() => cd.add(30)}>+30s</button>
+        <button class="btn-secondary" onClick=${onClose}>Terminar Descanso</button>
       </div>
     </div>
   `
