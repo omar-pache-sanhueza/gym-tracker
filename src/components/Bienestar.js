@@ -1,45 +1,56 @@
 import { html } from 'htm/preact'
 import { useState } from 'preact/hooks'
 
+const SVG_ATTRS = 'fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"'
+
 const ICON_SUENO = html`
-  <svg class="indicador-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <svg class="indicador-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <path d="M20 14.5A8 8 0 0 1 9.5 4a.6.6 0 0 0-.8-.75A9 9 0 1 0 20.75 15.3a.6.6 0 0 0-.75-.8z"/>
   </svg>
 `
 
 const ICON_MOTIVACION = html`
-  <svg class="indicador-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M13.5 0.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8c0-5.39-2.59-10.2-6.5-13.33zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/>
+  <svg class="indicador-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <circle cx="11" cy="13" r="8"/>
+    <circle cx="11" cy="13" r="4.5"/>
+    <circle cx="11" cy="13" r="1.4" fill="currentColor"/>
+    <path d="M14 10 21 3"/>
+    <path d="M17 3h4v4"/>
   </svg>
 `
 
 const ICON_ENERGIA = html`
-  <svg class="indicador-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M13 2 4.5 13.5h6L10 22l9-12h-6l1-8z"/>
+  <svg class="indicador-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <rect x="6" y="4" width="12" height="17" rx="2"/>
+    <path d="M10 2.5h4"/>
+    <path d="M13 8 10 14h3l-1 4 3-6h-3l1-4z" fill="currentColor" stroke="none"/>
   </svg>
 `
 
 const ICON_ESTRES = html`
   <svg class="indicador-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="M12 3a4 4 0 0 0-4 4v.5A3 3 0 0 0 6 13a3 3 0 0 0 1.5 2.6V17a3 3 0 0 0 4.5 2.6"/>
-    <path d="M12 3a4 4 0 0 1 4 4v.5A3 3 0 0 1 18 13a3 3 0 0 1-1.5 2.6V17a3 3 0 0 1-4.5 2.6"/>
-    <path d="M12 3v17"/>
-    <path d="M9 8h1M14 8h1M9 12h1M14 12h1"/>
+    <path d="M9 4.5a3 3 0 0 0-3 3 2.7 2.7 0 0 0-1.8 4.7A3 3 0 0 0 5 17.5 3 3 0 0 0 9 20a2.5 2.5 0 0 0 2.5-2.5V7a2.5 2.5 0 0 0-2.5-2.5z"/>
+    <path d="M7 11.5c.7-.3 1.3-1 1.5-1.7"/>
+    <path d="M7.5 15c.7.3 1.5.3 2.2 0"/>
+    <path d="M16 4 14 8h2.5L15 12l3-4h-2.5L17 4z" fill="currentColor" stroke="none"/>
+    <path d="M20 11l-1.5 2.5H20L19 16"/>
   </svg>
 `
 
 const ICON_ARTICULAR = html`
-  <svg class="indicador-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M8 1.4c-.9 0-1.6.7-1.6 1.6 0 .6.3 1.1.8 1.4-.5.3-.8.8-.8 1.4 0 .9.7 1.6 1.6 1.6h.4v4.8c-1.4.4-2.4 1.7-2.4 3.2 0 .9.4 1.7 1 2.3-.6.6-1 1.4-1 2.3 0 1.5 1 2.8 2.4 3.2v.4c0 .9.7 1.6 1.6 1.6.6 0 1.1-.3 1.4-.8.3.5.8.8 1.4.8.9 0 1.6-.7 1.6-1.6 0-.6-.3-1.1-.8-1.4.5-.3.8-.8.8-1.4 0-.9-.7-1.6-1.6-1.6h-.4v-4.8c1.4-.4 2.4-1.7 2.4-3.2 0-.9-.4-1.7-1-2.3.6-.6 1-1.4 1-2.3 0-1.5-1-2.8-2.4-3.2V2.4c0-.9-.7-1.6-1.6-1.6-.6 0-1.1.3-1.4.8-.3-.5-.8-.8-1.4-.8z"/>
+  <svg class="indicador-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M9 2c0 1.5.5 2.7 1.5 3.5C11.5 6.2 12 7 12 8.5V10"/>
+    <path d="M15 2c0 1.5-.5 2.7-1.5 3.5C12.5 6.2 12 7 12 8.5"/>
+    <circle cx="12" cy="12.5" r="3"/>
+    <path d="M9 22c0-1.5.5-2.7 1.5-3.5 1-.7 1.5-1.5 1.5-3v-1"/>
+    <path d="M15 22c0-1.5-.5-2.7-1.5-3.5-1-.7-1.5-1.5-1.5-3"/>
   </svg>
 `
 
 const ICON_RECUPERACION = html`
-  <svg class="indicador-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <ellipse cx="9" cy="11" rx="6" ry="4.2"/>
-    <rect x="3" y="13" width="13" height="6" rx="3"/>
-    <rect x="14" y="2" width="5.5" height="12" rx="2.7"/>
-    <rect x="14.5" y="1" width="4.5" height="1.5" rx="0.7"/>
+  <svg class="indicador-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M3 14c0-1.5 1.2-2.5 2.5-2.5h2c.8 0 1.5-.4 2-1 .8-1 1.5-2 1.5-3.5V4a1.5 1.5 0 0 1 1.5-1.5h2A1.5 1.5 0 0 1 16 4v3c0 2 1 3.5 2.5 4.5C20 12.5 21 14 21 16c0 3-2.5 5-5.5 5h-6c-3.5 0-6.5-2.5-6.5-7z"/>
+    <path d="M7.5 11.5c2 .5 4 .5 6-.5"/>
   </svg>
 `
 
