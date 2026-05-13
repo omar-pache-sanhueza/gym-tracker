@@ -23,7 +23,7 @@ export async function onRequestGet({ env }) {
     return Response.json({ tipo: 'descanso', proximo })
   } catch (err) {
     console.error('workout/today:', err)
-    return Response.json({ error: 'Error al leer la planilla.' }, { status: 502 })
+    return Response.json({ error: err.message || 'Error al leer la planilla.' }, { status: 502 })
   }
 }
 
