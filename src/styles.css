@@ -277,6 +277,23 @@ body {
 .serie-inputs-row { display: flex; gap: 16px; flex-wrap: wrap; }
 .serie-meta-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 
+.serie-active-block { width: 100%; display: flex; flex-direction: column; gap: 12px; }
+.serie-active-header { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 4px; }
+.serie-active-title { color: var(--accent); font-size: 19px; font-weight: 700; }
+.serie-active-total { color: var(--text-tertiary); font-size: 14px; }
+.serie-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-elev-2);
+  border-radius: 12px;
+  padding: 10px 14px;
+  min-height: 52px;
+}
+.serie-field-label { font-size: 16px; color: var(--text-primary); }
+.serie-field-value { color: var(--accent); font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
 /* ─── Stepper ─── */
 .stepper-group { display: flex; flex-direction: column; gap: 4px; }
 .stepper-label { font-size: 13px; color: var(--text-secondary); letter-spacing: 0.2px; }
