@@ -383,7 +383,7 @@ Regla de uso del acento: el verde neón se usa con moderación. En una pantalla 
 
 **Selector de estrellas 1–5:** cinco botones táctiles de al menos 44×44 pt. Las estrellas seleccionadas usan `--accent`; las no seleccionadas usan `--text-tertiary`. Debe tener label visible y `aria-label` por valor. Para `estrés`, la escala es de bienestar: 1 estrella = estrés muy alto, 5 estrellas = estrés muy bajo.
 
-**Slider 1–10 para RPE general:** track 4 px `--bg-elev-2`, parte llena `--accent`, thumb circular 24 px blanco, número grande al lado en `--accent` cuando se está arrastrando.
+**Slider 1–10 para RPE general:** track 4 px `--bg-elev-2`, parte llena `--accent`, thumb circular 24 px blanco, número grande al lado en `--accent` cuando se está arrastrando. El paso es `0,5` (valores válidos 1; 1,5; 2; ...; 10). El display usa coma decimal (ej. `7,5`).
 
 **Card de ejercicio:** fondo `--bg-elev-1`, radio 16 px, borde izquierdo 3 px `--accent` cuando el ejercicio está activo; borde izquierdo transparente cuando está colapsado.
 
@@ -452,9 +452,9 @@ Regla de uso del acento: el verde neón se usa con moderación. En una pantalla 
 
 **RF-17.** La app debe solicitar Wake Lock al iniciar el entreno para mantener la pantalla encendida, y liberarlo al finalizar la sesión o al cerrar la app.
 
-**RF-18.** Al completar las series de un ejercicio, se debe permitir ingresar un comentario opcional para ese ejercicio. No se solicita RPE final por ejercicio.
+**RF-18.** Al completar las series de un ejercicio, se debe permitir ingresar un comentario opcional para ese ejercicio. Se muestra y permite editar el RPE programado del ejercicio mediante un stepper con paso de `0,5` (rango 1–10). El valor se persiste y se incluye en el resumen.
 
-**RF-19.** La pantalla de cierre debe mostrar duración calculada automáticamente, RPE general del día (slider 1–10 obligatorio), comentario general del día (textarea) y un resumen no agregado de los ejercicios ejecutados. No debe mostrar peso total, volumen total, indicadores diarios/semanales de carga ni sRPE.
+**RF-19.** La pantalla de cierre debe mostrar duración calculada automáticamente, RPE general del día (slider 1–10 obligatorio, paso `0,5`, display con coma decimal), comentario general del día (textarea) y un resumen no agregado de los ejercicios ejecutados. No debe mostrar peso total, volumen total, indicadores diarios/semanales de carga ni sRPE.
 
 **RF-20.** El botón primario de cierre debe llamarse `Finalizar entrenamiento y enviar`. Al presionarlo, la app debe capturar `finISO`, calcular `duracionTotalSeg`, llamar al endpoint del backend con el payload completo y disparar el envío del email.
 
