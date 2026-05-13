@@ -79,16 +79,18 @@ export function buildEmailHtml(sesion) {
 
 /**
  * Calcula HMAC-SHA256 usando Web Crypto API (disponible en Workers).
+ * El secreto se interpreta como UTF-8 para matchear con Apps Script
+ * (Utilities.computeHmacSha256Signature trata el secret como string UTF-8).
  * @param {string} message
- * @param {string} secretHex
+ * @param {string} secret
  * @returns {Promise<string>}
  */
-export async function computeHmac(message, secretHex) {
-  const keyBytes = new Uint8Array(secretHex.match(/../g).map(h => parseInt(h, 16)))
+export async function computeHmac(message, secret) {
+  const enc = new TextEncoder()
   const key = await crypto.subtle.importKey(
-    'raw', keyBytes, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+    'raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
   )
-  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(message))
+  const sig = await crypto.subtle.sign('HMAC', key, enc.encode(message))
   return Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, '0')).join('')
 }
 
