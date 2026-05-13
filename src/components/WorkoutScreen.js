@@ -26,6 +26,7 @@ function initEjercicios(workout) {
     orden: ej.orden,
     nombre: ej.nombre,
     comentario: ej.comentarioSugerido || '',
+    rpeEjercicio: ej.seriesProgramadas[0]?.rpeProgramado ?? null,
     series: ej.seriesProgramadas.map(s => ({
       numero: s.numero,
       reps: typeof s.repeticionesProgramadas === 'string'
@@ -90,6 +91,7 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
     onDone(ejercicios.map(ej => ({
       orden: ej.orden,
       nombre: ej.nombre,
+      rpeEjercicio: ej.rpeEjercicio,
       series: ej.series.map(s => ({
         numero: s.numero,
         reps: s.reps,
@@ -115,7 +117,6 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
           const isActive = ejIdx === activeEjIdx
           const isDone = ej.series.every(s => s.completada)
           const activeSerieIdx = isActive ? ej.series.findIndex(s => !s.completada) : -1
-          const todasSeriesHechas = isActive && activeSerieIdx === -1
 
           return html`
             <div class="exercise-card ${isActive ? 'active' : ''} ${isDone ? 'done' : ''}">
@@ -191,15 +192,29 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
                     `
                   })}
 
-                  ${todasSeriesHechas && html`
-                    <textarea
-                      class="input-field"
-                      placeholder="Comentario del ejercicio (opcional)"
-                      value=${ej.comentario}
-                      onInput=${e => updateEjercicio(ejIdx, { comentario: e.target.value })}
-                      rows="2"
-                      style="margin-top:12px;resize:none"
-                    />
+                  ${isDone && html`
+                    <div style="margin-top:12px;display:flex;flex-direction:column;gap:10px">
+                      ${ej.rpeEjercicio !== null && html`
+                        <div class="stepper-group">
+                          <span class="stepper-label">RPE del ejercicio</span>
+                          <div class="stepper">
+                            <button type="button" class="stepper-btn"
+                              onClick=${() => updateEjercicio(ejIdx, { rpeEjercicio: Math.max(1, ej.rpeEjercicio - 1) })}>−</button>
+                            <span class="stepper-value">${ej.rpeEjercicio}</span>
+                            <button type="button" class="stepper-btn"
+                              onClick=${() => updateEjercicio(ejIdx, { rpeEjercicio: Math.min(10, ej.rpeEjercicio + 1) })}>+</button>
+                          </div>
+                        </div>
+                      `}
+                      <textarea
+                        class="input-field"
+                        placeholder="Comentario del ejercicio (opcional)"
+                        value=${ej.comentario}
+                        onInput=${e => updateEjercicio(ejIdx, { comentario: e.target.value })}
+                        rows="2"
+                        style="resize:none"
+                      />
+                    </div>
                   `}
                 </div>
               `}

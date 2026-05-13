@@ -67,7 +67,7 @@ export default function WorkoutSummary({ workout, onStart, onLogout, onSelectDay
                 <p class="exercise-preview-name">${ej.nombre}</p>
                 <p class="exercise-preview-meta">
                   ${ej.seriesProgramadas.length} series
-                  · ${s?.repeticionesProgramadas} reps
+                  · ${s?.repeticionesProgramadas} repeticiones
                   ${s?.rpeProgramado != null ? ` @ RPE${s.rpeProgramado}` : ''}
                   ${s?.pesoSugeridoKg != null ? ` · ${s.pesoSugeridoKg} kg` : ' · peso corporal'}
                 </p>
