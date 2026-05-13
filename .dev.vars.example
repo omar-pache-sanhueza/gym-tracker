@@ -1,0 +1,12 @@
+# Copiar a .dev.vars y completar con los valores reales de desarrollo.
+# Wrangler lee .dev.vars para las Pages Functions en local (wrangler pages dev).
+
+APP_PASSWORD_HASH=$2a$12$reemplazar_con_hash_bcrypt
+SESSION_SECRET=reemplazar_con_64_hex_chars
+GOOGLE_SHEETS_API_KEY=AIzaSy_reemplazar
+GOOGLE_SHEET_ID=reemplazar_con_id_de_la_planilla
+APPS_SCRIPT_WEBHOOK=https://script.google.com/macros/s/REEMPLAZAR/exec
+APPS_SCRIPT_SECRET=reemplazar_con_64_hex_chars
+EMAIL_TO=omar.pache@gmail.com
+SESSION_VERSION=1
+TZ=America/Santiago
