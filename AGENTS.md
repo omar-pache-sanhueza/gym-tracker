@@ -6,7 +6,7 @@ Instrucciones para agentes IA (Claude Code, Codex, etc.) y desarrolladores traba
 
 Web app personal de un solo usuario (Omar). Gym Tracker que lee una Google Sheet existente y envía un resumen por email al finalizar cada sesión.
 
-**Para entender qué debe hacer el sistema y por qué, leer `docs/SPEC.md`.** Este documento NO repite ese contenido — solo cubre cómo trabajar con el código.
+**Para entender qué debe hacer el sistema y por qué, leer `docs/SPEC.md`.** Este documento NO repite ese contenido - solo cubre cómo trabajar con el código.
 
 ## Stack
 
@@ -70,12 +70,12 @@ apps-script/
 
 ## Reglas críticas (NO violar)
 
-1. **NUNCA escribir en la Google Sheet.** La app solo lee. Si te piden agregar escritura, confirma con el humano antes — implica cambios mayores de arquitectura (OAuth, etc.) que están explícitamente fuera de alcance v1.
+1. **NUNCA escribir en la Google Sheet.** La app solo lee. Si te piden agregar escritura, confirma con el humano antes - implica cambios mayores de arquitectura (OAuth, etc.) que están explícitamente fuera de alcance v1.
 2. **NUNCA committear secretos.** Todo va en variables de entorno de Cloudflare. El archivo `.env.local` está en `.gitignore`.
 3. **NUNCA cambiar el proveedor de email.** Es Apps Script por decisión arquitectónica (ver `docs/SPEC.md` §5.3 y §14). Resend, SendGrid, SMTP, etc. están descartados.
 4. **Sigue el sistema de diseño** definido en `docs/SPEC.md` §8 al pie de la letra. El verde neón (`--accent`) se reserva para acción y estado activo, NO decora libremente.
 5. **Mobile-first siempre.** El target es Safari iOS en iPhone XR (414×896 pt). Si algo se ve bien en desktop pero mal en móvil, se prioriza el móvil.
-6. **El parser de la planilla es frágil.** Antes de modificar `functions/lib/parser.js`, correr los tests con el snapshot actual. Si cambia el formato de la planilla, agregar un nuevo snapshot — no romper los existentes.
+6. **El parser de la planilla es frágil.** Antes de modificar `functions/lib/parser.js`, correr los tests con el snapshot actual. Si cambia el formato de la planilla, agregar un nuevo snapshot - no romper los existentes.
 7. **Pre-llenar campos desde la planilla.** Cuando se renderiza un día, los inputs de serie (reps, peso sugerido editable, RPE programado, descanso) deben venir con los valores que dice la planilla, no con defaults inventados.
 8. **No reutilizar bibliotecas de componentes de UI.** Todos los componentes (botones, estrellas, sliders, inputs) son propios. NO instalar Material UI, Radix, Headless UI, shadcn, etc.
 9. **No agregar tracking, analytics ni telemetría.** El único output del sistema es el email a `omar.pache@gmail.com`.
@@ -83,7 +83,7 @@ apps-script/
 ## Gotchas conocidos
 
 - **Tiempo de descanso en la planilla:** viene como `" 2 min"`, `"1,5 min"`, `"1 min"`. Hay que trimmear, reemplazar coma por punto, parsear, multiplicar por 60. El parser ya lo hace; no inventes uno paralelo.
-- **Peso `—` (em-dash) en la planilla:** indica ejercicios de peso corporal. El input de peso se oculta. No se calcula ni muestra ningún indicador agregado de carga para esa serie.
+- **Peso `-` (em-dash) en la planilla:** indica ejercicios de peso corporal. El input de peso se oculta. No se calcula ni muestra ningún indicador agregado de carga para esa serie.
 - **Wake Lock en iOS:** la API existe desde iOS 16.4, pero Safari la revoca al cambiar de tab. Manejar el evento `visibilitychange` y re-solicitar al volver al foreground.
 - **Cronómetro general durante descanso:** debe seguir corriendo, NO pausarse cuando el overlay del descanso aparece encima.
 - **Cookie de sesión:** `SameSite=Strict` rompe el login si se prueba la API desde un dominio distinto al del frontend. Para pruebas cross-origin usar `SameSite=Lax` solo en dev.

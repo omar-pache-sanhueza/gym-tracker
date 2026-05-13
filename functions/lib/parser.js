@@ -159,7 +159,7 @@ function parseExercises(values, startRow, weekCol) {
     const descansoRaw = String(row[weekCol + 6] || '').trim()
     const comentario = String(row[weekCol + 7] || '').trim()
 
-    const isDash = v => v === '—' || v === '-' || v === ''
+    const isDash = v => v === '-' || v === '-' || v === ''
     const rpeParsed = isDash(rpeRaw) ? null : parseFloat(rpeRaw)
     const pesoParsed = isDash(pesoRaw) ? null : parseFloat(pesoRaw.replace(',', '.'))
     const repsValue = repsRaw.includes('-') || isNaN(Number(repsRaw))

@@ -53,7 +53,7 @@ export default function WorkoutSummary({ workout, onStart, onLogout, onSelectDay
       <header class="screen-header">
         <div>
           <p class="screen-header-meta">${workout.mesociclo} · Semana ${workout.semana}</p>
-          <h2 class="screen-header-title">Día ${workout.diaNumero} — ${workout.diaNombre}</h2>
+          <h2 class="screen-header-title">Día ${workout.diaNumero} - ${workout.diaNombre}</h2>
         </div>
         <button class="btn-ghost" onClick=${onLogout}>Salir</button>
       </header>

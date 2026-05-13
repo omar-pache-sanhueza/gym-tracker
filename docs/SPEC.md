@@ -23,7 +23,7 @@ La app no debe mostrar indicadores agregados de carga como volumen total, peso t
 ## 2. Objetivos
 
 ### 2.1 Objetivo principal
-Que Omar pueda llegar al gimnasio, abrir Gym Tracker en Safari de su iPhone XR, autenticarse con una contraseña, ver la sesión que le toca hoy según su planilla, ejecutarla con cronómetros integrados y enviar un resumen por correo al terminar — todo sin tocar la planilla original ni otra app.
+Que Omar pueda llegar al gimnasio, abrir Gym Tracker en Safari de su iPhone XR, autenticarse con una contraseña, ver la sesión que le toca hoy según su planilla, ejecutarla con cronómetros integrados y enviar un resumen por correo al terminar - todo sin tocar la planilla original ni otra app.
 
 ### 2.2 Objetivos secundarios
 - Operar a costo **estrictamente cero** al mes.
@@ -134,7 +134,7 @@ Todo el stack es nativo en Linux. Asumimos una distribución reciente (Ubuntu/Fe
 | **Node.js LTS** (≥20) | Vía `nvm`: `nvm install --lts` | Runtime de scripts, Vite, Wrangler |
 | **Git** | `apt install git` | Versionado |
 | **Wrangler CLI** | `npm i -g wrangler` | Dev local + deploy a Cloudflare |
-| **Editor** | VS Code | — |
+| **Editor** | VS Code | - |
 
 ### 6.2 Flujo local
 
@@ -276,8 +276,8 @@ type Ejercicio = {
 type SerieProgramada = {
   numero: number;                    // 1, 2, 3...
   repeticionesProgramadas: number | string; // a veces "8-10"
-  rpeProgramado: number | null;      // intensidad objetivo 1..10, null si "—"
-  pesoSugeridoKg: number | null;     // editable; null si peso corporal / "—"
+  rpeProgramado: number | null;      // intensidad objetivo 1..10, null si "-"
+  pesoSugeridoKg: number | null;     // editable; null si peso corporal / "-"
   descansoPrescritoSeg: number;      // parseado desde "1,5 min" → 90
 };
 
@@ -440,7 +440,7 @@ Regla de uso del acento: el verde neón se usa con moderación. En una pantalla 
 
 **RF-11.** Cada serie debe mostrar, en este orden lógico: número de serie, repeticiones programadas/editables, intensidad programada en formato `RPE @ N` (1–10), peso sugerido editable y descanso prescrito para esa serie.
 
-**RF-12.** Para ejercicios con peso `—` en la planilla (peso corporal), el input de peso debe ocultarse y la serie debe mostrar `peso corporal` o equivalente.
+**RF-12.** Para ejercicios con peso `-` en la planilla (peso corporal), el input de peso debe ocultarse y la serie debe mostrar `peso corporal` o equivalente.
 
 **RF-13.** El botón `Hecho` de cada serie debe: (a) bloquear los inputs de la serie, (b) registrar la marca de tiempo, (c) iniciar automáticamente la cuenta regresiva de descanso usando el valor prescrito convertido a segundos.
 
@@ -470,7 +470,7 @@ Regla de uso del acento: el verde neón se usa con moderación. En una pantalla 
 
 ## 11. Requisitos no funcionales (RNF)
 
-**RNF-01 – Plataforma objetivo.** Debe funcionar sin defectos visuales o de interacción en Safari iOS 17+ sobre iPhone XR (414×896 pt, notch superior, gesto inferior). Otros navegadores son "best effort", pero no se invierte tiempo extra para soportarlos en v1. **El producto es una web app — no requiere distribución por App Store ni firma de código.**
+**RNF-01 – Plataforma objetivo.** Debe funcionar sin defectos visuales o de interacción en Safari iOS 17+ sobre iPhone XR (414×896 pt, notch superior, gesto inferior). Otros navegadores son "best effort", pero no se invierte tiempo extra para soportarlos en v1. **El producto es una web app - no requiere distribución por App Store ni firma de código.**
 
 **RNF-02 – Tamaño táctil.** Todos los controles interactivos deben tener al menos 44×44 pt de área tappable.
 
@@ -703,7 +703,7 @@ Convención: el header sticky mide ~56 pt y respeta `safe-area-inset-top`. El co
 │  Sueño ★★★★☆ · Energía ★★★☆☆                  │
 │  Estrés ★★★★☆ · Articular ★★★★★               │
 │  Recuperación muscular ★★★★☆                   │
-│  Comentario bienestar: —                        │
+│  Comentario bienestar: -                        │
 │                                                 │
 │  Ejercicios del día                             │
 │  ┌───────────────────────────────────────────┐  │
@@ -733,11 +733,11 @@ Todas las rutas viven bajo `/api/*`. Todas las respuestas son JSON. Todas requie
 | Método | Ruta | Body | Respuesta exitosa | Errores |
 |--------|------|------|-------------------|---------|
 | POST | `/api/auth/login` | `{ password: string }` | 200 + Set-Cookie | 401 password incorrecto, 429 rate-limit |
-| POST | `/api/auth/logout` | — | 204 + cookie expirada | — |
-| GET | `/api/workout/today` | — | `WorkoutDay` o `{ tipo: "descanso", proximo: ... }` | 502 si falla Sheets, 503 si la planilla no parsea |
-| GET | `/api/workout/by-date?date=YYYY-MM-DD` | — | `WorkoutDay` | 404 si no hay entreno ese día |
+| POST | `/api/auth/logout` | - | 204 + cookie expirada | - |
+| GET | `/api/workout/today` | - | `WorkoutDay` o `{ tipo: "descanso", proximo: ... }` | 502 si falla Sheets, 503 si la planilla no parsea |
+| GET | `/api/workout/by-date?date=YYYY-MM-DD` | - | `WorkoutDay` | 404 si no hay entreno ese día |
 | POST | `/api/workout/submit` | `SesionCompletada` | `{ enviado: true, messageId: string }` | 502 si falla Apps Script |
-| GET | `/api/health` | — | `{ ok: true, version }` | — |
+| GET | `/api/health` | - | `{ ok: true, version }` | - |
 
 ### 14.1 Flujo de envío de email (worker → Apps Script)
 
@@ -811,7 +811,7 @@ function jsonResponse(obj) {
 ## 15. Seguridad
 
 - **Password:** un único hash bcrypt (factor 12) en la variable `APP_PASSWORD_HASH`. Nunca en el bundle del cliente.
-- **JWT de sesión:** firmado HS256 con `SESSION_SECRET` (32 bytes aleatorios). Claims: `iat`, `exp` (30 días), `v` (versión de credencial — incrementar `v` invalida todas las sesiones anteriores).
+- **JWT de sesión:** firmado HS256 con `SESSION_SECRET` (32 bytes aleatorios). Claims: `iat`, `exp` (30 días), `v` (versión de credencial - incrementar `v` invalida todas las sesiones anteriores).
 - **Cookie:** `HttpOnly`, `Secure`, `SameSite=Strict`, `Path=/`, sin `Domain` explícito.
 - **Rate limit del login:** 3 intentos / 10 min / IP, luego 5 min de cooldown. Implementado con Cloudflare KV o Durable Objects.
 - **CORS:** mismo origen únicamente; el frontend y la API están en el mismo dominio.

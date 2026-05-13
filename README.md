@@ -38,8 +38,8 @@ public/      Assets estáticos (manifest PWA, íconos)
 
 ## Documentación
 
-- [`docs/SPEC.md`](docs/SPEC.md) — especificación funcional y técnica completa: qué hace el sistema, por qué, paleta de diseño, modelo de datos, contratos de API, criterios de aceptación.
-- [`AGENTS.md`](AGENTS.md) — instrucciones operativas para agentes IA (Claude Code, Codex, etc.) y desarrolladores que trabajen en el código: comandos, convenciones, reglas críticas, gotchas conocidos.
+- [`docs/SPEC.md`](docs/SPEC.md) - especificación funcional y técnica completa: qué hace el sistema, por qué, paleta de diseño, modelo de datos, contratos de API, criterios de aceptación.
+- [`AGENTS.md`](AGENTS.md) - instrucciones operativas para agentes IA (Claude Code, Codex, etc.) y desarrolladores que trabajen en el código: comandos, convenciones, reglas críticas, gotchas conocidos.
 
 ## Licencia
 
