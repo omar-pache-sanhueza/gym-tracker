@@ -47,12 +47,7 @@ const ICON_ARTICULAR = html`
   </svg>
 `
 
-const ICON_RECUPERACION = html`
-  <svg class="indicador-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="M3 14c0-1.5 1.2-2.5 2.5-2.5h2c.8 0 1.5-.4 2-1 .8-1 1.5-2 1.5-3.5V4a1.5 1.5 0 0 1 1.5-1.5h2A1.5 1.5 0 0 1 16 4v3c0 2 1 3.5 2.5 4.5C20 12.5 21 14 21 16c0 3-2.5 5-5.5 5h-6c-3.5 0-6.5-2.5-6.5-7z"/>
-    <path d="M7.5 11.5c2 .5 4 .5 6-.5"/>
-  </svg>
-`
+const ICON_RECUPERACION = html`<span class="indicador-icon indicador-icon-emoji" aria-hidden="true">💪</span>`
 
 const INDICADORES = [
   { key: 'sueno', label: 'Sueño', icon: ICON_SUENO },
