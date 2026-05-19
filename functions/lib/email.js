@@ -26,12 +26,12 @@ export function buildEmailHtml(sesion) {
 
   const ejerciciosHtml = sesion.ejerciciosEjecutados.map(ej => `
     <div style="border:1px solid #e0e0e0;border-radius:8px;padding:16px;margin-bottom:12px;">
-      <p style="font-weight:600;margin-bottom:8px;">${ej.orden}. ${ej.nombre}</p>
+      <p style="font-weight:600;margin-bottom:8px;">${ej.orden}. ${ej.nombre}${ej.rpeEjercicio != null ? ` <span style="font-weight:400;color:#555;">· RPE @${String(ej.rpeEjercicio).replace('.', ',')}</span>` : ''}</p>
       <table style="width:100%;border-collapse:collapse;font-size:14px;">
         ${ej.series.map(s => `
           <tr>
             <td style="padding:3px 8px 3px 0;color:#555;white-space:nowrap;">Serie ${s.numero}</td>
-            <td style="padding:3px 8px;">${s.reps} reps${s.rpeProgramado ? ` RPE @${s.rpeProgramado}` : ''}</td>
+            <td style="padding:3px 8px;">${s.reps} reps</td>
             <td style="padding:3px 8px;">${s.pesoKg !== null && s.pesoKg !== undefined ? `${s.pesoKg} kg` : 'peso corporal'}</td>
             <td style="padding:3px 0;color:#888;">${formatDuration(s.descansoPrescritoSeg)} desc.</td>
           </tr>`).join('')}
