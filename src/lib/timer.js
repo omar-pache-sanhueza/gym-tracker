@@ -54,6 +54,7 @@ export function useCountdown(initialSecs) {
     secs: Math.max(0, secs),
     done: remainingMs() <= 0,
     paused,
+    endAt: paused ? null : endAtRef.current,
     pause: () => {
       if (pausedRemainingRef.current != null) return
       pausedRemainingRef.current = Math.max(0, endAtRef.current - Date.now())

@@ -1,25 +1,7 @@
 import { html } from 'htm/preact'
 import { useState, useEffect, useRef } from 'preact/hooks'
 import { useElapsedSeconds, useCountdown, fmtHMS, fmtMS } from '../lib/timer.js'
-
-function playBeep() {
-  try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)()
-    const osc = ctx.createOscillator()
-    const gain = ctx.createGain()
-    osc.connect(gain)
-    gain.connect(ctx.destination)
-    osc.frequency.value = 880
-    gain.gain.setValueAtTime(0.3, ctx.currentTime)
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4)
-    osc.start()
-    osc.stop(ctx.currentTime + 0.4)
-  } catch {}
-}
-
-function vibrate() {
-  try { navigator.vibrate([100, 100, 200]) } catch {}
-}
+import { scheduleBeepIn, beepNow, unlockAudio, vibrate } from '../lib/audio.js'
 
 function firstIncomplete(ejercicios) {
   return ejercicios.findIndex(ej => !ej.series.every(s => s.completada))
@@ -106,6 +88,7 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
   }
 
   function handleSerieDone(ejIdx, serieIdx) {
+    unlockAudio()
     const ej = ejercicios[ejIdx]
     const serie = ej.series[serieIdx]
     const desc = serie.descansoPrescritoSeg
@@ -329,11 +312,25 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
 
 function RestOverlay({ secs, last, next, onClose }) {
   const cd = useCountdown(secs)
+  const firedRef = useRef(false)
 
+  // Pre-agenda el beep con Web Audio cada vez que cambia endAt (resume/+30s/skip).
+  // En pausa (endAt = null) se cancela hasta que se reanude.
   useEffect(() => {
-    if (cd.done) {
+    if (cd.endAt == null) return
+    const remaining = Math.max(0, (cd.endAt - Date.now()) / 1000)
+    if (remaining <= 0) return
+    const cancel = scheduleBeepIn(remaining)
+    return cancel
+  }, [cd.endAt])
+
+  // Vibración (solo Android) y respaldo de beep cuando el timer llega a 0
+  // mientras la app está visible. Se dispara una sola vez.
+  useEffect(() => {
+    if (cd.done && !firedRef.current) {
+      firedRef.current = true
       vibrate()
-      playBeep()
+      if (!document.hidden) beepNow()
     }
   }, [cd.done])
 
