@@ -344,15 +344,26 @@ function RestOverlay({ secs, last, next, onClose }) {
 
   return html`
     <div class="rest-overlay">
-      <p class="rest-title">Descanso</p>
-      ${last && html`
+      ${last ? html`
         <div class="rest-context rest-context-last">
           <p class="rest-context-label">Última serie</p>
           <p class="rest-context-ej">${last.ejercicio}</p>
           <p class="rest-context-detail">${serieLine(last)}</p>
         </div>
-      `}
-      <div class="rest-timer ${cd.done ? 'blink' : ''}">${fmtMS(cd.secs)}</div>
+      ` : html`<div></div>`}
+
+      <div class="rest-center">
+        <p class="rest-title">Descanso</p>
+        <div class="rest-timer ${cd.done ? 'blink' : ''}">${fmtMS(cd.secs)}</div>
+        <div class="rest-actions">
+          <button class="btn-secondary" onClick=${() => cd.add(30)}>+30s</button>
+          <button class="btn-secondary" onClick=${cd.paused ? cd.resume : cd.pause}>
+            ${cd.paused ? 'Reanudar' : 'Pausa'}
+          </button>
+          <button class="btn-secondary" onClick=${onClose}>Terminar</button>
+        </div>
+      </div>
+
       ${next ? html`
         <div class="rest-context rest-context-next">
           <p class="rest-context-label">Siguiente</p>
@@ -365,13 +376,6 @@ function RestOverlay({ secs, last, next, onClose }) {
           <p class="rest-context-detail">Última serie del día</p>
         </div>
       `}
-      <div class="rest-actions">
-        <button class="btn-secondary" onClick=${() => cd.add(30)}>+30s</button>
-        <button class="btn-secondary" onClick=${cd.paused ? cd.resume : cd.pause}>
-          ${cd.paused ? 'Reanudar' : 'Pausa'}
-        </button>
-        <button class="btn-secondary" onClick=${onClose}>Terminar Descanso</button>
-      </div>
     </div>
   `
 }
