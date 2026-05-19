@@ -106,9 +106,44 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
   }
 
   function handleSerieDone(ejIdx, serieIdx) {
-    const desc = ejercicios[ejIdx].series[serieIdx].descansoPrescritoSeg
+    const ej = ejercicios[ejIdx]
+    const serie = ej.series[serieIdx]
+    const desc = serie.descansoPrescritoSeg
+
+    const last = {
+      ejercicio: ej.nombre,
+      numero: serie.numero,
+      reps: serie.reps,
+      pesoKg: serie.esPesoCorporal ? null : serie.pesoKg,
+    }
+
+    let next = null
+    const nextSerieSameEj = ej.series.find((s, i) => i > serieIdx && !s.completada)
+    if (nextSerieSameEj) {
+      next = {
+        ejercicio: ej.nombre,
+        numero: nextSerieSameEj.numero,
+        reps: nextSerieSameEj.reps,
+        pesoKg: nextSerieSameEj.esPesoCorporal ? null : nextSerieSameEj.pesoKg,
+      }
+    } else {
+      for (let i = 0; i < ejercicios.length; i++) {
+        if (i === ejIdx) continue
+        const pending = ejercicios[i].series.find(s => !s.completada)
+        if (pending) {
+          next = {
+            ejercicio: ejercicios[i].nombre,
+            numero: pending.numero,
+            reps: pending.reps,
+            pesoKg: pending.esPesoCorporal ? null : pending.pesoKg,
+          }
+          break
+        }
+      }
+    }
+
     updateSerie(ejIdx, serieIdx, { completada: true, completadoEn: new Date().toISOString() })
-    setRest({ secs: desc, key: `${ejIdx}-${serieIdx}` })
+    setRest({ secs: desc, key: `${ejIdx}-${serieIdx}`, last, next })
   }
 
   function handleFinish() {
@@ -283,6 +318,8 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
         <${RestOverlay}
           key=${rest.key}
           secs=${rest.secs}
+          last=${rest.last}
+          next=${rest.next}
           onClose=${() => { setRest(null); scrollActiveIntoView() }}
         />
       `}
@@ -290,7 +327,7 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
   `
 }
 
-function RestOverlay({ secs, onClose }) {
+function RestOverlay({ secs, last, next, onClose }) {
   const cd = useCountdown(secs)
 
   useEffect(() => {
@@ -300,10 +337,34 @@ function RestOverlay({ secs, onClose }) {
     }
   }, [cd.done])
 
+  const serieLine = (s) => {
+    const peso = s.pesoKg !== null && s.pesoKg !== undefined ? `${s.pesoKg} kg` : 'peso corporal'
+    return `Serie ${s.numero}: ${s.reps} reps · ${peso}`
+  }
+
   return html`
     <div class="rest-overlay">
       <p class="rest-title">Descanso</p>
+      ${last && html`
+        <div class="rest-context rest-context-last">
+          <p class="rest-context-label">Última serie</p>
+          <p class="rest-context-ej">${last.ejercicio}</p>
+          <p class="rest-context-detail">${serieLine(last)}</p>
+        </div>
+      `}
       <div class="rest-timer ${cd.done ? 'blink' : ''}">${fmtMS(cd.secs)}</div>
+      ${next ? html`
+        <div class="rest-context rest-context-next">
+          <p class="rest-context-label">Siguiente</p>
+          <p class="rest-context-ej">${next.ejercicio}</p>
+          <p class="rest-context-detail">${serieLine(next)}</p>
+        </div>
+      ` : html`
+        <div class="rest-context rest-context-next">
+          <p class="rest-context-label">Siguiente</p>
+          <p class="rest-context-detail">Última serie del día</p>
+        </div>
+      `}
       <div class="rest-actions">
         <button class="btn-secondary" onClick=${() => cd.add(30)}>+30s</button>
         <button class="btn-secondary" onClick=${cd.paused ? cd.resume : cd.pause}>
