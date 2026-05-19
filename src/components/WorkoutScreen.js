@@ -132,7 +132,7 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
     <div class="screen-workout">
       <header class="workout-header">
         <span class="workout-timer">${fmtHMS(elapsed)}</span>
-        <span class="workout-header-day">D${workout.diaNumero} ${workout.diaNombre}</span>
+        <span class="workout-header-day">Día ${workout.diaNumero} - ${workout.diaNombre}</span>
         <button class="btn-ghost small" onClick=${onLogout}>Salir</button>
       </header>
 

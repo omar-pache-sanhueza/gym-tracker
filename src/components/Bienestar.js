@@ -58,10 +58,10 @@ export default function Bienestar({ sugerido, onDone, onBack }) {
         `)}
 
         <div class="indicador-group">
-          <span class="indicador-label">Comentario Bienestar:</span>
+          <span class="indicador-label">Complementa el cómo te sientes hoy:</span>
           <textarea
             class="input-field"
-            placeholder="Opcional"
+            placeholder="Puedes dejar un comentario aquí"
             value=${nota}
             onInput=${e => setNota(e.target.value)}
             rows="2"
