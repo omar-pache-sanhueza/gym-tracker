@@ -16,7 +16,7 @@ El propósito es reemplazar el flujo manual actual (mirar la planilla en Drive, 
 
 La unidad operativa de ejecución es la **serie**. La UI no debe usar la palabra inglesa `set`; debe mostrar `Serie 1`, `Serie 2`, etc. Cada serie muestra repeticiones, intensidad programada en formato `RPE @ N`, peso sugerido editable y descanso prescrito para esa serie.
 
-La app no debe mostrar indicadores agregados de carga como volumen total, peso total, tonelaje diario o tonelaje semanal. El resumen se limita a: ejercicios del día, series ejecutadas, indicadores de bienestar, RPE general del día, comentario por ejercicio, comentario general y duración automática.
+La app no debe mostrar indicadores agregados de carga como volumen total, peso total, tonelaje diario o tonelaje semanal. El resumen se limita a: ejercicios del día, series ejecutadas, indicadores de bienestar, RPE general del día, comentario por serie, comentario general y duración automática.
 
 **No es una app nativa.** No hay Swift, no hay Xcode, no hay App Store. Es una web tradicional que el navegador puede opcionalmente "instalar" como ícono en el home.
 
@@ -220,13 +220,17 @@ La planilla tiene una hoja por bloque de la periodización:
 
 Dentro de cada hoja de mesociclo:
 - **Fila 1:** etiqueta `Semana N` cada 11 columnas, empezando en la columna 4.
-- **Fila 2:** encabezado del día con el patrón `Día N - Nombre: WeekdayName DD/MM/AAAA` (ej.: `Día 1 - Piernas A:  Lunes 11/05/2026`).
-- **Fila 3:** texto de bienestar pre-entreno. Para Gym Tracker se consumen cinco indicadores: `Sueño`, `Energía`, `Estrés`, `Salud articular` y `Recuperación muscular`, más una nota libre opcional.
-- **Fila 4:** encabezados de tabla esperados: `Orden | Ejercicio | Series | Repeticiones | RPE | Peso (kg) | Descanso entre series | Comentarios del ejercicio`. Si la planilla conserva columnas heredadas de agregados de carga, el parser debe ignorarlas.
+- **Fila 2:** encabezado del día. A partir del Mesociclo 3 el título y la fecha viven en **celdas separadas**: la celda del título trae `Día N - Nombre:` (ej.: `Día 1 - Piernas A:`) y la celda **contigua a la derecha** (`weekCol+1`) trae la fecha con formato `WeekdayName DD/MM/AAAA` (ej.: `lunes 22/06/2026`). El formato anterior (Mesociclos 1–2) embebía la fecha en el mismo título (`Día 1 - Piernas A:  Lunes 30/03/2026`); el parser soporta ambos: usa la fecha inline si existe, si no lee la celda contigua.
+- **Fila 3:** texto de bienestar pre-entreno (opcional). El formato nuevo deja esta fila vacía en el bloque de semana y rotula los indicadores como encabezados inline en la fila del día. Para Gym Tracker se consumen cinco indicadores: `Sueño`, `Energía`, `Estrés`, `Salud articular` y `Recuperación muscular`, más una nota libre opcional.
+- **Fila 4:** encabezados de tabla esperados: `Orden | Ejercicio | Series | Repeticiones | RPE | Peso (kg) | Descanso entre series (min) | Tonelaje (kg) | Comentarios del ejercicio`. La columna `Tonelaje (kg)` (`weekCol+7`) es un agregado de carga y **el parser la ignora por diseño**; el comentario del ejercicio está en `weekCol+8`.
 - **Filas 5–10 (típico):** ejercicios del día.
-- **Fila siguiente:** campos de cierre: duración prescrita opcional, RPE global sugerido opcional y comentario post-entreno. La duración real de Gym Tracker no se edita: se calcula automáticamente por cronómetro.
+- **Fila siguiente:** campos de cierre: duración prescrita opcional, RPE global sugerido opcional (puede ser decimal, ej. `7,5`; el parser lo toma de la celda contigua a la etiqueta `RPE global:`) y comentario post-entreno. La duración real de Gym Tracker no se edita: se calcula automáticamente por cronómetro.
 
-Los días dentro de una misma semana se repiten en bloques verticales de ~12 filas (Día 1 arriba, luego Día 2, Día 3, Día 4). Los ejercicios sin carga (abdominales, etc.) usan el carácter `-` en peso.
+Los días dentro de una misma semana se repiten en bloques verticales de ~12 filas (Día 1 arriba, luego Día 2, Día 3, Día 4). Los ejercicios sin carga (abdominales, planchas, etc.) usan `-` o `—` en peso/RPE.
+
+**Descanso (`weekCol+6`):** el formato nuevo entrega un número desnudo en minutos (`4` → 240 s, `2,5` → 150 s), porque el encabezado ya rotula la unidad `(min)`. El formato viejo usaba string con sufijo (`" 3 min"`, `"1,5 min"`, `"30 s"`). El parser soporta ambos.
+
+**Esquema top / back-off (levantamientos principales del bloque de fuerza):** una sola fila de ejercicio puede representar varias series con cargas distintas. Las repeticiones llegan como `5 top / 7 back-off` y el peso como `70 / 62,5`. Regla de parseo: la **serie 1** toma el valor a la **izquierda** del `/` (top) y las **series 2..N** el valor a la **derecha** (back-off). La detección se gatilla solo cuando el campo de repeticiones contiene las palabras `top` y `back` (así, valores como `60 seg / lado` no se dividen).
 
 ### 7.2 Algoritmo de resolución de "día de hoy"
 
@@ -236,8 +240,9 @@ Los días dentro de una misma semana se repiten en bloques verticales de ~12 fil
    a. Leer las filas 1 y 2 completas (todas las columnas usadas).
    b. Por cada bloque de "Semana N" (columnas 4, 15, 26, ...):
       - Iterar Día 1..4 (offsets verticales conocidos).
-      - Extraer la fecha del encabezado del día con regex
-        /(\d{2})\/(\d{2})\/(\d{4})/.
+      - Extraer la fecha con regex /(\d{2})\/(\d{2})\/(\d{4})/ desde la
+        celda del título del día (formato viejo) o, si no la trae,
+        desde la celda contigua weekCol+1 (formato nuevo).
       - Si coincide con hoy → leer el bloque completo (bienestar,
         tabla de ejercicios, campos de cierre) y devolverlo.
 3. Si no hay coincidencia → devolver { tipo: "descanso", proximo: <next match> }.
@@ -270,15 +275,15 @@ type Ejercicio = {
   orden: number;
   nombre: string;
   seriesProgramadas: SerieProgramada[];
-  comentarioSugerido?: string;
 };
 
 type SerieProgramada = {
   numero: number;                    // 1, 2, 3...
-  repeticionesProgramadas: number | string; // a veces "8-10"
+  repeticionesProgramadas: number | string; // a veces "8-10"; en top/back-off la serie 1 trae el top y el resto el back-off
   rpeProgramado: number | null;      // intensidad objetivo 1..10, null si "-"
   pesoSugeridoKg: number | null;     // editable; null si peso corporal / "-"
-  descansoPrescritoSeg: number;      // parseado desde "1,5 min" → 90
+  descansoPrescritoSeg: number;      // parseado desde "1,5 min" → 90, o desde número en minutos "4" → 240
+  comentarioSugerido?: string;       // comentario pre-asignado de la planilla; solo la serie 1 lo recibe
 };
 
 type SesionCompletada = {
@@ -295,8 +300,8 @@ type SesionCompletada = {
 type EjercicioEjecutado = {
   orden: number;
   nombre: string;
+  rpeEjercicio: number | null;
   series: SerieEjecutada[];
-  comentario: string;
 };
 
 type SerieEjecutada = {
@@ -305,6 +310,7 @@ type SerieEjecutada = {
   rpeProgramado: number | null;
   pesoKg: number | null;
   descansoPrescritoSeg: number;
+  comentario: string;          // comentario propio de la serie; la serie 1 inicia con el comentario de la planilla
   completadoEn: string;
 };
 ```
@@ -323,6 +329,19 @@ Si la planilla entrega `Series = 4`, `Repeticiones = 8`, `RPE = 8`, `Peso = 60` 
 ```
 
 El usuario puede editar repeticiones y peso de cada serie. La intensidad `RPE @` se muestra como objetivo programado y no se edita durante la sesión, salvo que el diseño futuro agregue explícitamente edición de programación.
+
+**Expansión con esquema top / back-off.** Si la planilla entrega `Series = 4`, `Repeticiones = 5 top / 7 back-off`, `Peso = 70 / 62,5`, la expansión asigna a la serie 1 el valor izquierdo (top) y a las series 2..4 el valor derecho (back-off):
+
+```json
+[
+  { "numero": 1, "repeticionesProgramadas": 5, "pesoSugeridoKg": 70,   "...": "..." },
+  { "numero": 2, "repeticionesProgramadas": 7, "pesoSugeridoKg": 62.5, "...": "..." },
+  { "numero": 3, "repeticionesProgramadas": 7, "pesoSugeridoKg": 62.5, "...": "..." },
+  { "numero": 4, "repeticionesProgramadas": 7, "pesoSugeridoKg": 62.5, "...": "..." }
+]
+```
+
+**Comentario por serie.** El comentario es un campo independiente por serie (CU-10 / RF-18). El comentario pre-asignado de la planilla (`Comentarios del ejercicio`, ej. `Aproximaciones: barra 20×8 / 40×5...`) pre-carga el comentario de la **serie 1**; las series 2..N inician vacías. Todos son editables durante la sesión y cada uno se incluye en el email si tiene contenido.
 
 ## 8. Sistema de diseño visual
 
@@ -411,7 +430,7 @@ Regla de uso del acento: el verde neón se usa con moderación. En una pantalla 
 | CU-07 | Ejecutar una serie | Omar | Anota repeticiones/peso reales, ve `RPE @` programado, marca `Hecho`; se inicia descanso |
 | CU-08 | Cronometrar descanso | Sistema | Cuenta regresiva desde el descanso prescrito para esa serie; vibra/suena al terminar |
 | CU-09 | Saltar / extender / pausar descanso | Omar | Botones `Saltar`, `Pausa/Reanudar`, `+30s` |
-| CU-10 | Comentar ejercicio | Omar | Ingresa comentario opcional por ejercicio, se muestra el RPE programado del ejercicio y se puede eitar |
+| CU-10 | Comentar serie | Omar | Ingresa un comentario opcional independiente por cada serie (la serie 1 viene pre-cargada con el comentario de la planilla si existe); además se muestra el RPE programado del ejercicio y se puede editar |
 | CU-11 | Finalizar sesión | Omar | se muesra el RPE programado general del día y se puede editar y se permite ingresar un comentario general |
 | CU-12 | Enviar email | Sistema | Al presionar `Finalizar entrenamiento y enviar`, calcula duración, firma payload y despacha el email vía Apps Script |
 | CU-13 | Recuperar sesión interrumpida | Omar | Al volver tras cierre accidental, la app restaura el estado desde localStorage |
@@ -436,7 +455,7 @@ Regla de uso del acento: el verde neón se usa con moderación. En una pantalla 
 
 **RF-09.** El cronómetro general no debe correr mientras se está completando la pantalla de bienestar. Debe arrancar únicamente cuando los 5 indicadores de bienestar estén completos y Omar presione `Iniciar entrenamiento`. Desde ese momento se muestra en formato `HH:MM:SS`, visible permanentemente en el header sticky, y solo se detiene al presionar `Finalizar entrenamiento y enviar`.
 
-**RF-10.** Cada ejercicio debe renderizarse con su orden, nombre, comentario opcional y tantas filas de **serie** como indique la planilla. La interfaz debe usar `Serie 1`, `Serie 2`, etc.; nunca `Set 1` ni `set`. El usuario puede tocar cualquier tarjeta de ejercicio incompleto para seleccionarlo y ejecutarlo fuera del orden programado; al terminar ese ejercicio, el sistema auto-avanza al ejercicio incompleto de menor índice.
+**RF-10.** Cada ejercicio debe renderizarse con su orden, nombre y tantas filas de **serie** como indique la planilla, cada una con su propio comentario opcional. La interfaz debe usar `Serie 1`, `Serie 2`, etc.; nunca `Set 1` ni `set`. El usuario puede tocar cualquier tarjeta de ejercicio incompleto para seleccionarlo y ejecutarlo fuera del orden programado; al terminar ese ejercicio, el sistema auto-avanza al ejercicio incompleto de menor índice.
 
 **RF-11.** Cada serie debe mostrar, en este orden lógico: número de serie, repeticiones programadas/editables, intensidad programada en formato `RPE @ N` (1–10), peso sugerido editable y descanso prescrito para esa serie.
 
@@ -452,7 +471,7 @@ Regla de uso del acento: el verde neón se usa con moderación. En una pantalla 
 
 **RF-17.** La app debe solicitar Wake Lock al iniciar el entreno para mantener la pantalla encendida, y liberarlo al finalizar la sesión o al cerrar la app.
 
-**RF-18.** Al completar las series de un ejercicio, se debe permitir ingresar un comentario opcional para ese ejercicio. Se muestra y permite editar el RPE programado del ejercicio mediante un stepper con paso de `0,5` (rango 1–10). El valor se persiste y se incluye en el resumen.
+**RF-18.** Cada serie debe permitir ingresar un comentario opcional independiente, disponible mientras la serie está activa. El comentario de la serie 1 se pre-carga con el texto de la columna `Comentarios del ejercicio` de la planilla (si lo hay); las demás inician vacías. Al completar las series de un ejercicio se muestra y permite editar el RPE programado del ejercicio mediante un stepper con paso de `0,5` (rango 1–10). Los comentarios por serie y el RPE del ejercicio se persisten y se incluyen en el resumen.
 
 **RF-19.** La pantalla de cierre debe mostrar duración calculada automáticamente, RPE general del día (slider 1–10 obligatorio, paso `0,5`, display con coma decimal), comentario general del día (textarea) y un resumen no agregado de los ejercicios ejecutados. No debe mostrar peso total, volumen total, indicadores diarios/semanales de carga ni sRPE.
 
@@ -965,17 +984,18 @@ Repo, cuenta Cloudflare, cuenta Google Cloud, Apps Script publicado, secretos ge
           "repeticionesProgramadas": 6,
           "rpeProgramado": 8,
           "pesoSugeridoKg": 60,
-          "descansoPrescritoSeg": 180
+          "descansoPrescritoSeg": 180,
+          "comentarioSugerido": "Aproximaciones: barra 20×8 / 40×5 / 55×3 / 65×2 -"
         },
         {
           "numero": 2,
           "repeticionesProgramadas": 6,
           "rpeProgramado": 8,
           "pesoSugeridoKg": 60,
-          "descansoPrescritoSeg": 180
+          "descansoPrescritoSeg": 180,
+          "comentarioSugerido": ""
         }
-      ],
-      "comentarioSugerido": ""
+      ]
     },
     {
       "orden": 2,
@@ -986,10 +1006,10 @@ Repo, cuenta Cloudflare, cuenta Google Cloud, Apps Script publicado, secretos ge
           "repeticionesProgramadas": 9,
           "rpeProgramado": 8,
           "pesoSugeridoKg": 50,
-          "descansoPrescritoSeg": 120
+          "descansoPrescritoSeg": 120,
+          "comentarioSugerido": ""
         }
-      ],
-      "comentarioSugerido": ""
+      ]
     }
   ],
   "rpeGlobalSugerido": 8
@@ -1016,6 +1036,7 @@ Repo, cuenta Cloudflare, cuenta Google Cloud, Apps Script publicado, secretos ge
     {
       "orden": 1,
       "nombre": "Sentadilla libre (barra baja)",
+      "rpeEjercicio": 8,
       "series": [
         {
           "numero": 1,
@@ -1023,6 +1044,7 @@ Repo, cuenta Cloudflare, cuenta Google Cloud, Apps Script publicado, secretos ge
           "rpeProgramado": 8,
           "pesoKg": 60,
           "descansoPrescritoSeg": 180,
+          "comentario": "Aproximaciones: barra 20×8 / 40×5 / 55×3 / 65×2 -",
           "completadoEn": "2026-05-11T09:08:00.000Z"
         },
         {
@@ -1031,6 +1053,7 @@ Repo, cuenta Cloudflare, cuenta Google Cloud, Apps Script publicado, secretos ge
           "rpeProgramado": 8,
           "pesoKg": 60,
           "descansoPrescritoSeg": 180,
+          "comentario": "",
           "completadoEn": "2026-05-11T09:13:10.000Z"
         },
         {
@@ -1039,6 +1062,7 @@ Repo, cuenta Cloudflare, cuenta Google Cloud, Apps Script publicado, secretos ge
           "rpeProgramado": 8,
           "pesoKg": 60,
           "descansoPrescritoSeg": 180,
+          "comentario": "",
           "completadoEn": "2026-05-11T09:18:20.000Z"
         },
         {
@@ -1047,6 +1071,7 @@ Repo, cuenta Cloudflare, cuenta Google Cloud, Apps Script publicado, secretos ge
           "rpeProgramado": 8,
           "pesoKg": 60,
           "descansoPrescritoSeg": 180,
+          "comentario": "",
           "completadoEn": "2026-05-11T09:23:30.000Z"
         },
         {
@@ -1055,10 +1080,10 @@ Repo, cuenta Cloudflare, cuenta Google Cloud, Apps Script publicado, secretos ge
           "rpeProgramado": 8,
           "pesoKg": 57.5,
           "descansoPrescritoSeg": 180,
+          "comentario": "Última serie bajé el peso para mantener técnica",
           "completadoEn": "2026-05-11T09:28:40.000Z"
         }
-      ],
-      "comentario": "Última serie bajé el peso para mantener técnica"
+      ]
     }
   ],
   "rpeGeneralDia": 8,

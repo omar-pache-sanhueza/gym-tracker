@@ -11,7 +11,6 @@ function initEjercicios(workout) {
   return workout.ejercicios.map(ej => ({
     orden: ej.orden,
     nombre: ej.nombre,
-    comentario: '',
     rpeEjercicio: ej.seriesProgramadas[0]?.rpeProgramado ?? null,
     series: ej.seriesProgramadas.map(s => ({
       numero: s.numero,
@@ -22,6 +21,8 @@ function initEjercicios(workout) {
       pesoKg: s.pesoSugeridoKg,
       esPesoCorporal: s.pesoSugeridoKg === null,
       descansoPrescritoSeg: s.descansoPrescritoSeg,
+      // Comentario propio de cada serie; el de la planilla pre-carga la serie 1.
+      comentario: s.comentarioSugerido || '',
       completada: false,
       completadoEn: null,
     })),
@@ -140,9 +141,9 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
         rpeProgramado: s.rpeProgramado,
         pesoKg: s.esPesoCorporal ? null : s.pesoKg,
         descansoPrescritoSeg: s.descansoPrescritoSeg,
+        comentario: s.comentario || '',
         completadoEn: s.completadoEn || new Date().toISOString(),
       })),
-      comentario: ej.comentario,
     })))
   }
 
@@ -229,6 +230,15 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
                               <span class="serie-field-value">${fmtMS(serie.descansoPrescritoSeg)} minutos</span>
                             </div>
 
+                            <textarea
+                              class="input-field"
+                              placeholder="Comentario de la serie (opcional)"
+                              value=${serie.comentario}
+                              onInput=${e => updateSerie(ejIdx, serieIdx, { comentario: e.target.value })}
+                              rows="2"
+                              style="resize:none"
+                            />
+
                             <button
                               type="button"
                               class="btn-primary"
@@ -253,33 +263,24 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
                               ${!serie.esPesoCorporal && serie.pesoKg != null ? ` · ${serie.pesoKg} kg` : ''}
                             </span>
                           `}
+                          ${serie.comentario ? html`<span class="serie-comment">${serie.comentario}</span>` : ''}
                         `}
                       </div>
                     `
                   })}
 
-                  ${isDone && html`
+                  ${isDone && ej.rpeEjercicio !== null && html`
                     <div style="margin-top:12px;display:flex;flex-direction:column;gap:10px">
-                      ${ej.rpeEjercicio !== null && html`
-                        <div class="stepper-group">
-                          <span class="stepper-label">RPE del ejercicio</span>
-                          <div class="stepper">
-                            <button type="button" class="stepper-btn"
-                              onClick=${() => updateEjercicio(ejIdx, { rpeEjercicio: Math.max(1, ej.rpeEjercicio - 0.5) })}>−</button>
-                            <span class="stepper-value">${String(ej.rpeEjercicio).replace('.', ',')}</span>
-                            <button type="button" class="stepper-btn"
-                              onClick=${() => updateEjercicio(ejIdx, { rpeEjercicio: Math.min(10, ej.rpeEjercicio + 0.5) })}>+</button>
-                          </div>
+                      <div class="stepper-group">
+                        <span class="stepper-label">RPE del ejercicio</span>
+                        <div class="stepper">
+                          <button type="button" class="stepper-btn"
+                            onClick=${() => updateEjercicio(ejIdx, { rpeEjercicio: Math.max(1, ej.rpeEjercicio - 0.5) })}>−</button>
+                          <span class="stepper-value">${String(ej.rpeEjercicio).replace('.', ',')}</span>
+                          <button type="button" class="stepper-btn"
+                            onClick=${() => updateEjercicio(ejIdx, { rpeEjercicio: Math.min(10, ej.rpeEjercicio + 0.5) })}>+</button>
                         </div>
-                      `}
-                      <textarea
-                        class="input-field"
-                        placeholder="Comentario del ejercicio (opcional)"
-                        value=${ej.comentario}
-                        onInput=${e => updateEjercicio(ejIdx, { comentario: e.target.value })}
-                        rows="2"
-                        style="resize:none"
-                      />
+                      </div>
                     </div>
                   `}
                 </div>

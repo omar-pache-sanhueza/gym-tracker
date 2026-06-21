@@ -1,33 +1,51 @@
 /**
- * Parsea string de descanso a segundos.
- * "2 min" → 120, "1,5 min" → 90, "30 s" → 30
- * @param {string} str
+ * Parsea string/número de descanso a segundos.
+ * "2 min" → 120, "1,5 min" → 90, "30 s" → 30.
+ * La columna "Descanso entre series (min)" del formato nuevo entrega un número
+ * desnudo en minutos ("4" → 240, "2,5" → 150).
+ * @param {string|number} str
  * @returns {number}
  */
 export function parseRestSeconds(str) {
-  if (!str) return 60
-  const s = str.trim().replace(',', '.')
+  if (str === null || str === undefined || str === '') return 60
+  const s = String(str).trim().replace(',', '.')
+  if (!s) return 60
   const minMatch = s.match(/([\d.]+)\s*min/i)
   if (minMatch) return Math.round(parseFloat(minMatch[1]) * 60)
   const secMatch = s.match(/([\d.]+)\s*s/i)
   if (secMatch) return Math.round(parseFloat(secMatch[1]))
+  // Número desnudo: la columna "(min)" lo entrega en minutos.
+  const bare = parseFloat(s)
+  if (!isNaN(bare)) return Math.round(bare * 60)
   return 60
 }
 
 /**
- * Parsea encabezado de día: "Día 1 - Piernas A:  Lunes 11/05/2026"
+ * Extrae una fecha ISO YYYY-MM-DD de un texto con patrón DD/MM/AAAA.
+ * Sirve tanto para la celda de fecha dedicada del formato nuevo
+ * ("lunes 22/06/2026") como para el encabezado inline del formato viejo.
  * @param {string} str
- * @returns {{ date: string, diaNumero: number, diaNombre: string } | null}
+ * @returns {string | null}
+ */
+function parseSheetDate(str) {
+  const m = String(str || '').match(/(\d{2})\/(\d{2})\/(\d{4})/)
+  if (!m) return null
+  const [, dd, mm, yyyy] = m
+  return `${yyyy}-${mm}-${dd}`
+}
+
+/**
+ * Parsea encabezado de día: "Día 1 - Piernas A:" (formato nuevo, sin fecha)
+ * o "Día 1 - Piernas A:  Lunes 11/05/2026" (formato viejo, fecha inline).
+ * @param {string} str
+ * @returns {{ date: string | null, diaNumero: number, diaNombre: string } | null}
  */
 export function parseDayHeader(str) {
   if (!str || typeof str !== 'string') return null
-  const dateMatch = str.match(/(\d{2})\/(\d{2})\/(\d{4})/)
-  if (!dateMatch) return null
-  const [, dd, mm, yyyy] = dateMatch
   const diaMatch = str.match(/D[íi]a\s+(\d+)\s*[-–]\s*([^:]+)/i)
   if (!diaMatch) return null
   return {
-    date: `${yyyy}-${mm}-${dd}`,
+    date: parseSheetDate(str),
     diaNumero: parseInt(diaMatch[1]),
     diaNombre: diaMatch[2].split(':')[0].trim(),
   }
@@ -48,9 +66,13 @@ export function findWorkoutInSheet(values, targetDate, mesocicloName) {
 
   for (const { col: weekCol, semana } of weekCols) {
     for (let rowIdx = 1; rowIdx < values.length; rowIdx++) {
-      const cell = String((values[rowIdx] || [])[weekCol] || '')
-      const dayInfo = parseDayHeader(cell)
-      if (!dayInfo || dayInfo.date !== targetDate) continue
+      const row = values[rowIdx] || []
+      const dayInfo = parseDayHeader(String(row[weekCol] || ''))
+      if (!dayInfo) continue
+      // En el formato nuevo la fecha vive en la celda contigua (weekCol+1).
+      const date = dayInfo.date || parseSheetDate(row[weekCol + 1])
+      if (!date || date !== targetDate) continue
+      dayInfo.date = date
 
       return buildWorkoutDay(values, rowIdx, weekCol, semana, mesocicloName, dayInfo)
     }
@@ -72,9 +94,12 @@ export function findAllDatesInSheet(values, mesocicloName) {
 
   for (const { col: weekCol } of weekCols) {
     for (let rowIdx = 1; rowIdx < values.length; rowIdx++) {
-      const cell = String((values[rowIdx] || [])[weekCol] || '')
-      const dayInfo = parseDayHeader(cell)
-      if (dayInfo) results.push({ fecha: dayInfo.date, diaNumero: dayInfo.diaNumero, diaNombre: dayInfo.diaNombre, mesociclo: mesocicloName })
+      const row = values[rowIdx] || []
+      const dayInfo = parseDayHeader(String(row[weekCol] || ''))
+      if (!dayInfo) continue
+      const date = dayInfo.date || parseSheetDate(row[weekCol + 1])
+      if (!date) continue
+      results.push({ fecha: date, diaNumero: dayInfo.diaNumero, diaNombre: dayInfo.diaNombre, mesociclo: mesocicloName })
     }
   }
 
@@ -109,19 +134,20 @@ function buildWorkoutDay(values, headerRow, weekCol, semana, mesocicloName, dayI
   // headerRow+2 = encabezados de tabla (se omite)
   const exercises = parseExercises(values, headerRow + 3, weekCol)
 
-  // Buscar RPE global sugerido en las filas de cierre (tras los ejercicios)
+  // Buscar RPE global sugerido en las filas de cierre (tras los ejercicios).
+  // Está junto a la etiqueta "RPE global:" y puede ser decimal (ej. 7,5).
   const closeStart = headerRow + 3 + exercises.length
   let rpeGlobalSugerido
   for (let r = closeStart; r < Math.min(closeStart + 4, values.length); r++) {
     const closeRow = values[r] || []
     for (let c = weekCol; c < Math.min(weekCol + 11, closeRow.length); c++) {
-      const val = parseFloat(String(closeRow[c] || '').replace(',', '.'))
-      if (!isNaN(val) && Number.isInteger(val) && val >= 1 && val <= 10) {
-        rpeGlobalSugerido = val
+      if (/RPE\s*global/i.test(String(closeRow[c] || ''))) {
+        const val = parseFloat(String(closeRow[c + 1] || '').replace(',', '.'))
+        if (!isNaN(val) && val >= 1 && val <= 10) rpeGlobalSugerido = val
         break
       }
     }
-    if (rpeGlobalSugerido) break
+    if (rpeGlobalSugerido !== undefined) break
   }
 
   return {
@@ -143,9 +169,42 @@ function buildWorkoutDay(values, headerRow, weekCol, semana, mesocicloName, dayI
   }
 }
 
+const isDash = v => v === '-' || v === '—' || v === ''
+
+/**
+ * Parte un valor con esquema "izquierda / derecha" (top / back-off).
+ * "70 / 62,5" → ['70', '62,5']; "5 top / 7 back-off" → ['5 top', '7 back-off'].
+ * @param {string} raw
+ * @returns {[string, string] | null}
+ */
+function splitSlash(raw) {
+  const s = String(raw)
+  const idx = s.indexOf('/')
+  if (idx === -1) return null
+  return [s.slice(0, idx).trim(), s.slice(idx + 1).trim()]
+}
+
+/** Primer número dentro de un token ("5 top" → 5, "62,5" → 62.5). */
+function firstNumber(token) {
+  const m = String(token).replace(',', '.').match(/-?\d+(?:\.\d+)?/)
+  return m ? parseFloat(m[0]) : null
+}
+
+/** Reps a nivel de ejercicio: número simple, o string si es rango/duración ("8-10", "60 seg"). */
+function parseReps(repsRaw) {
+  return repsRaw.includes('-') || isNaN(Number(repsRaw)) ? repsRaw : parseInt(repsRaw)
+}
+
+/** Peso simple a número o null si es peso corporal / "-". */
+function parsePeso(pesoRaw) {
+  if (isDash(pesoRaw)) return null
+  const n = parseFloat(String(pesoRaw).replace(',', '.'))
+  return isNaN(n) ? null : n
+}
+
 function parseExercises(values, startRow, weekCol) {
   const exercises = []
-  for (let r = startRow; r < Math.min(startRow + 8, values.length); r++) {
+  for (let r = startRow; r < Math.min(startRow + 10, values.length); r++) {
     const row = values[r] || []
     const ordenRaw = String(row[weekCol] || '').trim()
     const nombre = String(row[weekCol + 1] || '').trim()
@@ -156,27 +215,46 @@ function parseExercises(values, startRow, weekCol) {
     const repsRaw = String(row[weekCol + 3] || '').trim()
     const rpeRaw = String(row[weekCol + 4] || '').trim()
     const pesoRaw = String(row[weekCol + 5] || '').trim()
-    const descansoRaw = String(row[weekCol + 6] || '').trim()
-    const comentario = String(row[weekCol + 7] || '').trim()
+    const descansoRaw = row[weekCol + 6]
+    // weekCol + 7 = Tonelaje (agregado de carga; se ignora por diseño)
+    const comentario = String(row[weekCol + 8] || '').trim()
 
-    const isDash = v => v === '-' || v === '-' || v === ''
-    const rpeParsed = isDash(rpeRaw) ? null : parseFloat(rpeRaw)
-    const pesoParsed = isDash(pesoRaw) ? null : parseFloat(pesoRaw.replace(',', '.'))
-    const repsValue = repsRaw.includes('-') || isNaN(Number(repsRaw))
-      ? repsRaw
-      : parseInt(repsRaw)
+    const rpeParsed = isDash(rpeRaw) ? null : parseFloat(rpeRaw.replace(',', '.'))
+    const descansoSeg = parseRestSeconds(descansoRaw)
+
+    // Esquema top / back-off: la fila representa series con cargas distintas.
+    // Serie 1 toma el valor a la izquierda del "/"; las siguientes el de la derecha.
+    const esTopBackoff = /top/i.test(repsRaw) && /back/i.test(repsRaw)
+    const repsSplit = esTopBackoff ? splitSlash(repsRaw) : null
+    const pesoSplit = esTopBackoff ? splitSlash(pesoRaw) : null
+
+    const repsFor = i => {
+      if (repsSplit) {
+        const n = firstNumber(i === 0 ? repsSplit[0] : repsSplit[1])
+        return n != null ? n : repsRaw
+      }
+      return parseReps(repsRaw)
+    }
+    const pesoFor = i => {
+      if (pesoSplit) {
+        const n = firstNumber(i === 0 ? pesoSplit[0] : pesoSplit[1])
+        return n != null ? n : null
+      }
+      return parsePeso(pesoRaw)
+    }
 
     exercises.push({
       orden: parseInt(ordenRaw),
       nombre,
       seriesProgramadas: Array.from({ length: numSeries }, (_, i) => ({
         numero: i + 1,
-        repeticionesProgramadas: repsValue,
+        repeticionesProgramadas: repsFor(i),
         rpeProgramado: (rpeParsed !== null && !isNaN(rpeParsed)) ? rpeParsed : null,
-        pesoSugeridoKg: (pesoParsed !== null && !isNaN(pesoParsed)) ? pesoParsed : null,
-        descansoPrescritoSeg: parseRestSeconds(descansoRaw),
+        pesoSugeridoKg: pesoFor(i),
+        descansoPrescritoSeg: descansoSeg,
+        // El comentario pre-asignado de la planilla pre-carga la primera serie.
+        comentarioSugerido: i === 0 ? comentario : '',
       })),
-      comentarioSugerido: comentario,
     })
   }
   return exercises

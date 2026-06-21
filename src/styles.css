@@ -283,6 +283,7 @@ body {
 .serie-done-data { color: var(--accent); font-size: 16px; flex: 1; }
 .serie-check { color: var(--accent); font-size: 18px; }
 .serie-pending-data { color: var(--text-tertiary); font-size: 16px; flex: 1; }
+.serie-comment { flex-basis: 100%; color: var(--text-secondary); font-size: 14px; font-style: italic; }
 
 .serie-active-content { flex: 1; display: flex; flex-direction: column; gap: 8px; }
 .serie-inputs-row { display: flex; gap: 16px; flex-wrap: wrap; }
@@ -362,20 +363,20 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 20px;
   width: 100%;
 }
 .rest-title {
   color: var(--text-primary);
-  font-size: 32px;
+  font-size: 40px;
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
   text-transform: uppercase;
   margin: 0;
 }
 .rest-timer {
   font-family: "SF Mono", "JetBrains Mono", "Menlo", monospace;
-  font-size: 88px;
+  font-size: clamp(112px, 34vw, 168px);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   color: var(--accent);
@@ -386,26 +387,26 @@ body {
   50% { color: var(--danger); }
 }
 .rest-timer.blink { animation: blink 1s ease-in-out infinite; }
-.rest-actions { display: flex; gap: 12px; width: 100%; }
-.rest-actions .btn-secondary { flex: 1; }
+.rest-actions { display: flex; gap: 12px; width: 100%; max-width: 420px; }
+.rest-actions .btn-secondary { flex: 1; font-size: 17px; padding: 16px 12px; }
 .rest-context {
   width: 100%;
-  max-width: 360px;
+  max-width: 420px;
   text-align: center;
-  padding: 12px 16px;
+  padding: 16px 20px;
   border: 1px solid var(--border-subtle);
-  border-radius: 10px;
+  border-radius: 12px;
   background: var(--bg-elev-1);
 }
 .rest-context-label {
   color: var(--text-secondary);
-  font-size: 11px;
+  font-size: 13px;
   letter-spacing: 1px;
   text-transform: uppercase;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
-.rest-context-ej { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
-.rest-context-detail { color: var(--text-secondary); font-size: 13px; }
+.rest-context-ej { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+.rest-context-detail { color: var(--text-secondary); font-size: 17px; }
 
 /* ─── Finish screen ─── */
 .finish-section { margin-bottom: 28px; }

@@ -34,9 +34,9 @@ export function buildEmailHtml(sesion) {
             <td style="padding:3px 8px;">${s.reps} reps</td>
             <td style="padding:3px 8px;">${s.pesoKg !== null && s.pesoKg !== undefined ? `${s.pesoKg} kg` : 'peso corporal'}</td>
             <td style="padding:3px 0;color:#888;">${formatDuration(s.descansoPrescritoSeg)} desc.</td>
-          </tr>`).join('')}
+          </tr>
+          ${s.comentario ? `<tr><td></td><td colspan="3" style="padding:0 8px 6px;color:#555;font-style:italic;font-size:13px;">${s.comentario}</td></tr>` : ''}`).join('')}
       </table>
-      ${ej.comentario ? `<p style="margin-top:8px;color:#555;font-style:italic;font-size:14px;">${ej.comentario}</p>` : ''}
     </div>`).join('')
 
   return `<!DOCTYPE html>
