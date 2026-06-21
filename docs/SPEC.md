@@ -714,15 +714,14 @@ Convención: el header sticky mide ~56 pt y respeta `safe-area-inset-top`. El co
 │  Lunes 11 de mayo de 2026                       │
 │  Mesociclo 2 (Volumen) · Semana 7 · Día 1      │
 │                                                 │
-│  Duración automática: 1h 18m 42s                │
-│  Medida desde confirmar bienestar hasta envío    │
-│  RPE general del día: 8                         │
-│                                                 │
 │  Bienestar pre-entreno                          │
 │  Sueño ★★★★☆ · Energía ★★★☆☆                  │
 │  Estrés ★★★★☆ · Articular ★★★★★               │
 │  Recuperación muscular ★★★★☆                   │
 │  Comentario bienestar: -                        │
+│                                                 │
+│  Duración de la sesión: 79 min                  │
+│  RPE general del día: 8                         │
 │                                                 │
 │  Ejercicios del día                             │
 │  ┌───────────────────────────────────────────┐  │
@@ -743,7 +742,7 @@ Convención: el header sticky mide ~56 pt y respeta `safe-area-inset-top`. El co
 └────────────────────────────────────────────────┘
 ```
 
-El email debe ser inline-styled (sin CSS externo), responsive (max-width 600 px), legible en Gmail web y Gmail iOS. No debe incluir indicadores agregados de peso/carga, gráficos ni rankings. La duración informada corresponde al intervalo entre confirmar/completar bienestar e iniciar entrenamiento, y finalizar/enviar la sesión. Como es Gmail enviándose a sí mismo, **no hay riesgo de spam** y los estilos pasan los filtros sin problema.
+El email debe ser inline-styled (sin CSS externo), responsive (max-width 600 px), legible en Gmail web y Gmail iOS. No debe incluir indicadores agregados de peso/carga, gráficos ni rankings. La duración informada corresponde al intervalo entre confirmar/completar bienestar e iniciar entrenamiento, y finalizar/enviar la sesión; se expresa en minutos y se ubica junto al RPE general del día, después del bienestar y antes de los ejercicios. Como es Gmail enviándose a sí mismo, **no hay riesgo de spam** y los estilos pasan los filtros sin problema.
 
 ## 14. Contrato de API
 

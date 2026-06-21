@@ -59,13 +59,13 @@ export function buildEmailHtml(sesion) {
     ${b.nota ? `<tr><td colspan="2" style="padding:6px 0;color:#666;font-style:italic;">${b.nota}</td></tr>` : ''}
   </table>
 
-  <h3 style="font-size:15px;margin-bottom:10px;">Ejercicios del día</h3>
-  ${ejerciciosHtml}
-
   <table style="width:100%;margin:8px 0 24px;border-collapse:collapse;">
-    <tr><td style="padding:4px 0;color:#555;">Duración</td><td style="text-align:right;font-weight:600;">${formatDuration(sesion.duracionTotalSeg)}</td></tr>
+    <tr><td style="padding:4px 0;color:#555;">Duración de la sesión</td><td style="text-align:right;font-weight:600;">${Math.round(sesion.duracionTotalSeg / 60)} min</td></tr>
     <tr><td style="padding:4px 0;color:#555;">RPE general del día</td><td style="text-align:right;font-weight:600;">${String(sesion.rpeGeneralDia).replace('.', ',')} / 10</td></tr>
   </table>
+
+  <h3 style="font-size:15px;margin-bottom:10px;">Ejercicios del día</h3>
+  ${ejerciciosHtml}
 
   ${sesion.comentarioGeneralDia ? `
   <h3 style="font-size:15px;margin-bottom:8px;">Comentario general</h3>
