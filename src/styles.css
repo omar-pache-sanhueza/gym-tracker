@@ -376,7 +376,7 @@ body {
 }
 .rest-timer {
   font-family: "SF Mono", "JetBrains Mono", "Menlo", monospace;
-  font-size: clamp(112px, 34vw, 168px);
+  font-size: clamp(96px, 28vw, 140px);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   color: var(--accent);
