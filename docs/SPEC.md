@@ -31,7 +31,7 @@ Que Omar pueda llegar al gimnasio, abrir Gym Tracker en Safari de su iPhone XR, 
 - Ser instalable opcionalmente como Progressive Web App (PWA) en iPhone para abrirla desde el ícono de la pantalla de inicio.
 - Mantener el estado del entreno en curso aunque la pestaña se cierre por accidente.
 - Diseño moderno con identidad propia: tema oscuro de alto contraste con un acento verde neón.
-- Registrar bienestar diario con una escala táctil de **1 a 5 estrellas**.
+- Registrar bienestar diario con seis indicadores en una escala táctil de **1 a 5 estrellas** (sueño, motivación, energía, estrés, salud articular y recuperación muscular).
 - Registrar duración real automáticamente desde que se completan/confirman los indicadores de bienestar y se presiona `Iniciar entrenamiento`, hasta `Finalizar entrenamiento y enviar`.
 
 ### 2.3 No-objetivos (fuera de alcance v1)
@@ -67,7 +67,7 @@ Que Omar pueda llegar al gimnasio, abrir Gym Tracker en Safari de su iPhone XR, 
 | Pre-llenado de campos | **Sí**, valores del sheet como sugerencia editable | Reduce tecleo; usuario solo modifica lo que cambió |
 | Terminología de ejecución | **Serie**, no `set` | UI, modelo de datos y email deben decir `serie` / `series` |
 | Intensidad | `RPE @1–10` programado por serie | Se muestra como objetivo; no se pide RPE real por serie |
-| Bienestar | 5 indicadores con escala de 1 a 5 estrellas | Sueño, energía, estrés, salud articular y recuperación muscular |
+| Bienestar | 6 indicadores con escala de 1 a 5 estrellas | Sueño, motivación, energía, estrés, salud articular y recuperación muscular |
 | RPE de sesión | Un único **RPE general del día** | Se solicita al cierre antes de enviar el email |
 | Duración | Automática | Desde la confirmación de bienestar / `Iniciar entrenamiento` hasta `Finalizar entrenamiento y enviar` |
 | Indicadores de carga agregada | **No se muestran** | Sin peso total, tonelaje, volumen diario/semanal ni sRPE |
@@ -78,7 +78,7 @@ Que Omar pueda llegar al gimnasio, abrir Gym Tracker en Safari de su iPhone XR, 
 | Hosting | Cloudflare Pages + Pages Functions | $0/mes |
 | Dominio | Subdominio gratis `*.pages.dev` provisto por Cloudflare | $0/año |
 | Sistema de diseño | Oscuro con acento verde neón (#39FF14) | Ver sección 8 |
-| Controles del overlay de descanso | `Saltar`, `Pausa/Reanudar`, `+30s` | Sin `-30s` ni presets |
+| Controles del overlay de descanso | `+30s`, `Pausa/Reanudar`, `Terminar` | Sin `-30s` ni presets |
 
 ## 5. Stack técnico
 
@@ -221,7 +221,7 @@ La planilla tiene una hoja por bloque de la periodización:
 Dentro de cada hoja de mesociclo:
 - **Fila 1:** etiqueta `Semana N` cada 11 columnas, empezando en la columna 4.
 - **Fila 2:** encabezado del día. A partir del Mesociclo 3 el título y la fecha viven en **celdas separadas**: la celda del título trae `Día N - Nombre:` (ej.: `Día 1 - Piernas A:`) y la celda **contigua a la derecha** (`weekCol+1`) trae la fecha con formato `WeekdayName DD/MM/AAAA` (ej.: `lunes 22/06/2026`). El formato anterior (Mesociclos 1–2) embebía la fecha en el mismo título (`Día 1 - Piernas A:  Lunes 30/03/2026`); el parser soporta ambos: usa la fecha inline si existe, si no lee la celda contigua.
-- **Fila 3:** texto de bienestar pre-entreno (opcional). El formato nuevo deja esta fila vacía en el bloque de semana y rotula los indicadores como encabezados inline en la fila del día. Para Gym Tracker se consumen cinco indicadores: `Sueño`, `Energía`, `Estrés`, `Salud articular` y `Recuperación muscular`, más una nota libre opcional.
+- **Fila 3:** texto de bienestar pre-entreno (opcional). El formato nuevo deja esta fila vacía en el bloque de semana y rotula los indicadores como encabezados inline en la fila del día. Para Gym Tracker se consumen seis indicadores: `Sueño`, `Motivación`, `Energía`, `Estrés`, `Salud articular` y `Recuperación muscular`, más una nota libre opcional.
 - **Fila 4:** encabezados de tabla esperados: `Orden | Ejercicio | Series | Repeticiones | RPE | Peso (kg) | Descanso entre series (min) | Tonelaje (kg) | Comentarios del ejercicio`. La columna `Tonelaje (kg)` (`weekCol+7`) es un agregado de carga y **el parser la ignora por diseño**; el comentario del ejercicio está en `weekCol+8`.
 - **Filas 5–10 (típico):** ejercicios del día.
 - **Fila siguiente:** campos de cierre: duración prescrita opcional, RPE global sugerido opcional (puede ser decimal, ej. `7,5`; el parser lo toma de la celda contigua a la etiqueta `RPE global:`) y comentario post-entreno. La duración real de Gym Tracker no se edita: se calcula automáticamente por cronómetro.
@@ -264,6 +264,7 @@ type WorkoutDay = {
 
 type BienestarPre = {
   sueno: number;                 // 1..5 estrellas
+  motivacion: number;            // 1..5 estrellas
   energia: number;               // 1..5 estrellas
   estres: number;                // 1..5 estrellas, 1 = muy alto, 5 = muy bajo
   saludArticular: number;        // 1..5 estrellas
@@ -407,9 +408,9 @@ Regla de uso del acento: el verde neón se usa con moderación. En una pantalla 
 **Card de ejercicio:** fondo `--bg-elev-1`, radio 16 px, borde izquierdo 3 px `--accent` cuando el ejercicio está activo; borde izquierdo transparente cuando está colapsado.
 
 **Fila de serie:**
-- Pendiente: etiqueta `Serie N`, inputs visibles para repeticiones y peso, intensidad programada visible como `RPE @ N`, descanso visible, botón `Hecho` secundario.
+- Pendiente: etiqueta `Serie N`, inputs visibles para repeticiones y peso, intensidad programada visible como `RPE @ N`, descanso visible, botón `Serie completada`.
 - En progreso: highlight sutil con `--accent-soft` de fondo.
-- Completada: `Serie N` y datos ejecutados en `--accent`, botón reemplazado por un check.
+- Completada: `Serie N` y datos ejecutados en `--accent`, con un check y un botón ghost `Editar` que reabre la serie para ajustar repeticiones, peso y comentario (ver RF-26).
 
 **Cronómetro general (header sticky):** fondo `--bg-base` con borde inferior `--border-subtle`, dígitos mono en `--accent` mientras corre. Permanece detenido durante la pantalla de bienestar y empieza solo cuando los indicadores de bienestar están completos y se presiona `Iniciar entrenamiento`. Se detiene al presionar `Finalizar entrenamiento y enviar`.
 
@@ -421,19 +422,20 @@ Regla de uso del acento: el verde neón se usa con moderación. En una pantalla 
 
 | ID | Caso de uso | Actor | Descripción breve |
 |----|-------------|-------|-------------------|
-| CU-01 | Iniciar sesión | Omar | Ingresa password, recibe cookie de sesión válida 2 días |
+| CU-01 | Iniciar sesión | Omar | Ingresa password, recibe cookie de sesión válida 1 día |
 | CU-02 | Cerrar sesión | Omar | Invalida la cookie y vuelve al login |
 | CU-03 | Ver entreno del día | Omar | La app consulta la planilla y muestra los ejercicios de hoy |
 | CU-04 | Día de descanso | Omar | La app indica que hoy no toca y muestra el próximo entreno |
-| CU-05 | Registrar bienestar pre-entreno | Omar | Califica sueño, energía, estrés, salud articular y recuperación muscular con 1–5 estrellas + comentario opcional |
+| CU-05 | Registrar bienestar pre-entreno | Omar | Califica sueño, motivación, energía, estrés, salud articular y recuperación muscular con 1–5 estrellas + comentario opcional |
 | CU-06 | Iniciar el cronómetro general | Omar | Arranca solo después de completar los indicadores de bienestar y presionar `Iniciar entrenamiento`; corre hasta `Finalizar entrenamiento y enviar` |
-| CU-07 | Ejecutar una serie | Omar | Anota repeticiones/peso reales, ve `RPE @` programado, marca `Hecho`; se inicia descanso |
+| CU-07 | Ejecutar una serie | Omar | Anota repeticiones/peso reales, ve `RPE @` programado, marca `Serie completada`; se inicia descanso |
 | CU-08 | Cronometrar descanso | Sistema | Cuenta regresiva desde el descanso prescrito para esa serie; vibra/suena al terminar |
-| CU-09 | Saltar / extender / pausar descanso | Omar | Botones `Saltar`, `Pausa/Reanudar`, `+30s` |
+| CU-09 | Terminar / extender / pausar descanso | Omar | Botones `+30s`, `Pausa/Reanudar`, `Terminar` |
 | CU-10 | Comentar serie | Omar | Ingresa un comentario opcional independiente por cada serie (la serie 1 viene pre-cargada con el comentario de la planilla si existe); además se muestra el RPE programado del ejercicio y se puede editar |
 | CU-11 | Finalizar sesión | Omar | se muesra el RPE programado general del día y se puede editar y se permite ingresar un comentario general |
 | CU-12 | Enviar email | Sistema | Al presionar `Finalizar entrenamiento y enviar`, calcula duración, firma payload y despacha el email vía Apps Script |
 | CU-13 | Recuperar sesión interrumpida | Omar | Al volver tras cierre accidental, la app restaura el estado desde localStorage |
+| CU-14 | Reeditar serie completada | Omar | Reabre una serie ya marcada como hecha (del ejercicio actual o de uno anterior) para ajustar repeticiones, peso o comentario apenas termina |
 
 ## 10. Requisitos funcionales (RF)
 
@@ -441,7 +443,7 @@ Regla de uso del acento: el verde neón se usa con moderación. En una pantalla 
 
 **RF-02.** La pantalla de login debe pedir un único campo de password y no debe exponer ningún recurso protegido hasta que el password sea validado.
 
-**RF-03.** Tras un login exitoso, el backend debe emitir una cookie `HttpOnly`, `Secure`, `SameSite=Strict` con un JWT firmado, con expiración de 30 días.
+**RF-03.** Tras un login exitoso, el backend debe emitir una cookie `HttpOnly`, `Secure`, `SameSite=Strict` con un JWT firmado, con expiración de 1 día.
 
 **RF-04.** Tras tres intentos fallidos consecutivos desde la misma IP en 10 minutos, el endpoint de login debe retornar 429 durante 5 minutos.
 
@@ -451,9 +453,9 @@ Regla de uso del acento: el verde neón se usa con moderación. En una pantalla 
 
 **RF-07.** Si hoy es un día sin entreno programado, la app debe mostrar el mensaje correspondiente y el próximo entreno previsto, con un botón secundario `Iniciar otro día` que permita elegir manualmente cualquier día programado dentro del mesociclo activo.
 
-**RF-08.** La pantalla de bienestar pre-entreno debe mostrar 5 indicadores calificables de 1 a 5 estrellas: sueño, energía, estrés, salud articular y recuperación muscular. Debe incluir un campo de comentario libre opcional ("Comentario Bienestar:") que inicia vacío. Los indicadores siempre inician en 5 estrellas por defecto. No se muestra nota explicativa bajo ningún indicador.
+**RF-08.** La pantalla de bienestar pre-entreno debe mostrar 6 indicadores calificables de 1 a 5 estrellas: sueño, motivación, energía, estrés, salud articular y recuperación muscular. Debe incluir un campo de comentario libre opcional ("Comentario Bienestar:") que inicia vacío. Los indicadores siempre inician en 5 estrellas por defecto. No se muestra nota explicativa bajo ningún indicador.
 
-**RF-09.** El cronómetro general no debe correr mientras se está completando la pantalla de bienestar. Debe arrancar únicamente cuando los 5 indicadores de bienestar estén completos y Omar presione `Iniciar entrenamiento`. Desde ese momento se muestra en formato `HH:MM:SS`, visible permanentemente en el header sticky, y solo se detiene al presionar `Finalizar entrenamiento y enviar`.
+**RF-09.** El cronómetro general no debe correr mientras se está completando la pantalla de bienestar. Debe arrancar únicamente cuando los 6 indicadores de bienestar estén completos y Omar presione `Iniciar entrenamiento`. Desde ese momento se muestra en formato `HH:MM:SS`, visible permanentemente en el header sticky, y solo se detiene al presionar `Finalizar entrenamiento y enviar`.
 
 **RF-10.** Cada ejercicio debe renderizarse con su orden, nombre y tantas filas de **serie** como indique la planilla, cada una con su propio comentario opcional. La interfaz debe usar `Serie 1`, `Serie 2`, etc.; nunca `Set 1` ni `set`. El usuario puede tocar cualquier tarjeta de ejercicio incompleto para seleccionarlo y ejecutarlo fuera del orden programado; al terminar ese ejercicio, el sistema auto-avanza al ejercicio incompleto de menor índice.
 
@@ -461,9 +463,9 @@ Regla de uso del acento: el verde neón se usa con moderación. En una pantalla 
 
 **RF-12.** Para ejercicios con peso `-` en la planilla (peso corporal), el input de peso debe ocultarse y la serie debe mostrar `peso corporal` o equivalente.
 
-**RF-13.** El botón `Hecho` de cada serie debe: (a) bloquear los inputs de la serie, (b) registrar la marca de tiempo, (c) iniciar automáticamente la cuenta regresiva de descanso usando el valor prescrito convertido a segundos.
+**RF-13.** El botón `Serie completada` de cada serie debe: (a) marcar la serie como completada y dejar sus datos en modo lectura (reabribles para editar, ver RF-26), (b) registrar la marca de tiempo, (c) iniciar automáticamente la cuenta regresiva de descanso usando el valor prescrito convertido a segundos.
 
-**RF-14.** El cronómetro de descanso debe mostrarse como un overlay grande con cuenta regresiva en `MM:SS`, y debe ofrecer exactamente tres acciones: `Saltar`, `Pausa/Reanudar`, `+30s`.
+**RF-14.** El cronómetro de descanso debe mostrarse como un overlay grande con cuenta regresiva en `MM:SS`, y debe ofrecer exactamente tres acciones: `+30s`, `Pausa/Reanudar`, `Terminar`.
 
 **RF-15.** Al llegar a 0, el cronómetro de descanso debe disparar: (a) vibración del dispositivo (patrón corto-largo-corto), (b) un beep audible breve generado con Web Audio API (puede silenciarse desde un toggle global), (c) un cambio visual evidente (parpadeo entre `--accent` y `--danger`).
 
@@ -471,7 +473,7 @@ Regla de uso del acento: el verde neón se usa con moderación. En una pantalla 
 
 **RF-17.** La app debe solicitar Wake Lock al iniciar el entreno para mantener la pantalla encendida, y liberarlo al finalizar la sesión o al cerrar la app.
 
-**RF-18.** Cada serie debe permitir ingresar un comentario opcional independiente, disponible mientras la serie está activa. El comentario de la serie 1 se pre-carga con el texto de la columna `Comentarios del ejercicio` de la planilla (si lo hay); las demás inician vacías. Al completar las series de un ejercicio se muestra y permite editar el RPE programado del ejercicio mediante un stepper con paso de `0,5` (rango 1–10). Los comentarios por serie y el RPE del ejercicio se persisten y se incluyen en el resumen.
+**RF-18.** Cada serie debe permitir ingresar un comentario opcional independiente, disponible mientras la serie está activa y también al reabrir una serie ya completada (ver RF-26). El comentario de la serie 1 se pre-carga con el texto de la columna `Comentarios del ejercicio` de la planilla (si lo hay); las demás inician vacías. Al completar las series de un ejercicio se muestra y permite editar el RPE programado del ejercicio mediante un stepper con paso de `0,5` (rango 1–10). Los comentarios por serie y el RPE del ejercicio se persisten y se incluyen en el resumen.
 
 **RF-19.** La pantalla de cierre debe mostrar duración calculada automáticamente, RPE general del día (slider 1–10 obligatorio, paso `0,5`, display con coma decimal), comentario general del día (textarea) y un resumen no agregado de los ejercicios ejecutados. No debe mostrar peso total, volumen total, indicadores diarios/semanales de carga ni sRPE.
 
@@ -486,6 +488,8 @@ Regla de uso del acento: el verde neón se usa con moderación. En una pantalla 
 **RF-24.** Debe existir un botón `Cerrar sesión` accesible desde el menú/header de cualquier pantalla autenticada.
 
 **RF-25.** Toda la interfaz debe respetar el sistema de diseño definido en la sección 8: tema oscuro `--bg-base`, acento `--accent`, tipografía sistema, geometría y componentes especificados.
+
+**RF-26.** Cualquier serie ya completada (del ejercicio en curso o de uno terminado antes) debe poder reabrirse para edición mediante un botón `Editar`, sin importar que ya no sea la serie activa. Al reabrirla se muestran los mismos controles de la serie activa para ajustar repeticiones, peso y comentario; la intensidad programada sigue siendo de solo lectura y el descanso no se reinicia. Los cambios se persisten en `localStorage` (RF-23) y se reflejan en el resumen y el email. Un botón `Listo` cierra la edición y la serie vuelve a su vista de solo lectura.
 
 ## 11. Requisitos no funcionales (RNF)
 
@@ -585,9 +589,12 @@ Convención: el header sticky mide ~56 pt y respeta `safe-area-inset-top`. El co
 
 ```
 ┌─────────────────────────────┐
-│ ◀ Bienestar pre-entreno      │
+│ ◀ Bienestar de hoy           │
 ├─────────────────────────────┤
 │  Sueño                       │
+│  ★ ★ ★ ★ ☆   4/5            │
+│                              │
+│  Motivación                  │
 │  ★ ★ ★ ★ ☆   4/5            │
 │                              │
 │  Energía                     │
@@ -613,53 +620,54 @@ Convención: el header sticky mide ~56 pt y respeta `safe-area-inset-top`. El co
 
 ```
 ┌─────────────────────────────┐
-│ 🕒 00:14:32  ·  D1 Piernas A │ ← cronómetro en verde neón
+│ 🕒 00:14:32  Día 1-Piernas A  Salir │ ← cronómetro verde neón
 ├─────────────────────────────┤
-│ ▌1. Sentadilla libre         │ ← borde izq. neón = activo
-│  Objetivo: 5 series          │
+│ 1. Sentadilla libre          │ ← tarjeta activa
 │                              │
-│  Serie 1 ✓ 6 reps RPE @8     │ ← verde neón
-│          60 kg · desc 3 min  │
-│  Serie 2 ✓ 6 reps RPE @8     │
-│          60 kg · desc 3 min  │
-│  Serie 3 ▸ [ 6 ] RPE @8      │
-│            Peso [ 60 kg ]    │
-│            Descanso 3 min    │
-│            [    Hecho     ]  │
-│  Serie 4    6 reps RPE @8    │
-│            Peso sugerido 60  │
-│  Serie 5    6 reps RPE @8    │
-│            Peso sugerido 60  │
+│  Serie 1  6 repeticiones     │ ← completada, verde neón
+│           RPE @8 · 60 kg ✓ [Editar]│
+│  Serie 2  6 repeticiones     │
+│           RPE @8 · 60 kg ✓ [Editar]│
+│  ┌─────────────────────────┐ │ ← serie activa (borde neón)
+│  │ Serie 3          de 5    │ │
+│  │ Repeticiones    − 6 +    │ │
+│  │ Intensidad      RPE @8   │ │
+│  │ Peso sugerido   − 60 kg +│ │
+│  │ Descanso        3:00 min │ │
+│  │ [ comentario opcional   ]│ │ ← comentario por serie
+│  │ [   Serie completada    ]│ │
+│  └─────────────────────────┘ │
+│  Serie 4  6 repeticiones RPE @8 │
+│  Serie 5  6 repeticiones RPE @8 │
 │                              │
-│  Comentario del ejercicio    │
-│  [                         ] │
-│                              │
-│  [   Siguiente ejercicio   ] │
-│                              │
-│  2. Peso muerto rumano       │ ← colapsado
+│  2. Peso muerto rumano       │ ← colapsado: "Toca para ir aquí"
 │  3. Prensa de piernas        │
 │  4. Elevaciones de talón     │
 │  5. Crunch abdominal         │
 └─────────────────────────────┘
 ```
 
+El comentario es por serie (vive dentro del bloque de la serie activa o al reabrir una serie con `Editar`), no por ejercicio. No hay botón `Siguiente ejercicio`: al completar la última serie el sistema auto-avanza al ejercicio incompleto de menor índice (RF-10). Cuando un ejercicio queda totalmente completo aparece bajo sus series un stepper `RPE del ejercicio` (paso 0,5, rango 1–10; RF-18).
+
 ### 12.6 Overlay de descanso
 
 ```
 ┌─────────────────────────────┐
+│  Última serie                │ ← bloque de contexto superior
+│  Sentadilla libre            │
+│  Serie 2: 6 reps · 60 kg     │
 │                              │
-│         Descanso              │
-│                              │
-│                              │
-│                              │
+│         Descanso             │
 │         02:14                │ ← mono 88px verde neón
+│  [+30s] [Pausa] [Terminar]   │
 │                              │
-│                              │
-│                              │
-│  [Saltar] [Pausa] [+30s]     │
-│                              │
+│  Siguiente                   │ ← bloque de contexto inferior
+│  Sentadilla libre            │
+│  Serie 3: 6 reps · 60 kg     │
 └─────────────────────────────┘
 ```
+
+El overlay muestra, además del cronómetro, dos bloques de contexto: arriba la `Última serie` recién completada (ejercicio + reps/peso) y abajo la `Siguiente` serie a ejecutar (o `Última serie del día` si no quedan pendientes).
 
 ### 12.7 Cierre y envío
 
@@ -715,9 +723,9 @@ Convención: el header sticky mide ~56 pt y respeta `safe-area-inset-top`. El co
 │  Mesociclo 2 (Volumen) · Semana 7 · Día 1      │
 │                                                 │
 │  Bienestar pre-entreno                          │
-│  Sueño ★★★★☆ · Energía ★★★☆☆                  │
-│  Estrés ★★★★☆ · Articular ★★★★★               │
-│  Recuperación muscular ★★★★☆                   │
+│  Sueño ★★★★☆ · Motivación ★★★★☆               │
+│  Energía ★★★☆☆ · Estrés ★★★★☆                 │
+│  Articular ★★★★★ · Recuperación ★★★★☆          │
 │  Comentario bienestar: -                        │
 │                                                 │
 │  Duración de la sesión: 79 min                  │
@@ -829,7 +837,7 @@ function jsonResponse(obj) {
 ## 15. Seguridad
 
 - **Password:** un único hash bcrypt (factor 12) en la variable `APP_PASSWORD_HASH`. Nunca en el bundle del cliente.
-- **JWT de sesión:** firmado HS256 con `SESSION_SECRET` (32 bytes aleatorios). Claims: `iat`, `exp` (30 días), `v` (versión de credencial - incrementar `v` invalida todas las sesiones anteriores).
+- **JWT de sesión:** firmado HS256 con `SESSION_SECRET` (32 bytes aleatorios). Claims: `iat`, `exp` (1 día), `v` (versión de credencial - incrementar `v` invalida todas las sesiones anteriores).
 - **Cookie:** `HttpOnly`, `Secure`, `SameSite=Strict`, `Path=/`, sin `Domain` explícito.
 - **Rate limit del login:** 3 intentos / 10 min / IP, luego 5 min de cooldown. Implementado con Cloudflare KV o Durable Objects.
 - **CORS:** mismo origen únicamente; el frontend y la API están en el mismo dominio.
@@ -889,9 +897,9 @@ Para considerar la v1 lista para producción, todos estos casos deben pasar:
 2. Password correcto → entra; incorrecto → mensaje de error claro; 3 fallos → bloqueo de 5 min.
 3. En lunes/martes/jueves/viernes a las 5:55 am, la pantalla principal muestra el día de hoy con todos los ejercicios y valores prellenados desde la planilla.
 4. En miércoles/sábado/domingo, la app muestra mensaje de día de descanso y el próximo entreno calculado.
-5. La pantalla de bienestar permite calificar con 1–5 estrellas: sueño, energía, estrés, salud articular y recuperación muscular, más un comentario opcional; no permite iniciar hasta tener los 5 indicadores completos.
+5. La pantalla de bienestar permite calificar con 1–5 estrellas: sueño, motivación, energía, estrés, salud articular y recuperación muscular, más un comentario opcional; no permite iniciar hasta tener los 6 indicadores completos.
 6. Presionar `Iniciar entrenamiento` después de completar bienestar inicia el cronómetro general y registra `inicioISO`; navegar por la pantalla de resumen o bienestar no cuenta como tiempo de entrenamiento.
-7. Marcar una serie como `Hecho` inicia el descanso con el tiempo correcto extraído del valor `"2 min"` / `"1,5 min"` / `"1 min"` de la planilla.
+7. Marcar una serie como `Serie completada` inicia el descanso con el tiempo correcto extraído del valor `"2 min"` / `"1,5 min"` / `"1 min"` de la planilla.
 8. Cada fila usa la palabra `Serie`, muestra repeticiones, `RPE @` programado, peso sugerido editable y descanso de esa serie.
 9. El descanso vibra y suena al llegar a 0 (con el teléfono en modo normal).
 10. El cronómetro general sigue corriendo durante los descansos y se ve siempre en el header.
@@ -967,6 +975,7 @@ Repo, cuenta Cloudflare, cuenta Google Cloud, Apps Script publicado, secretos ge
   "diaNombre": "Piernas A",
   "bienestarSugerido": {
     "sueno": 4,
+    "motivacion": 4,
     "energia": 4,
     "estres": 4,
     "saludArticular": 5,
@@ -1025,6 +1034,7 @@ Repo, cuenta Cloudflare, cuenta Google Cloud, Apps Script publicado, secretos ge
   "duracionTotalSeg": 4722,
   "bienestarPre": {
     "sueno": 4,
+    "motivacion": 4,
     "energia": 4,
     "estres": 4,
     "saludArticular": 5,

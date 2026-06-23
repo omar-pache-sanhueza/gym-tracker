@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs'
 import { SignJWT, jwtVerify } from 'jose'
 
 const COOKIE_NAME = 'session'
-const COOKIE_MAX_AGE = 60 * 60 * 24 * 30 // 30 días
+const COOKIE_MAX_AGE = 60 * 60 * 24 // 1 día
 
 // Rate limit en memoria por isolate (suficiente para un solo usuario)
 const rateLimitStore = new Map()
@@ -25,7 +25,7 @@ export async function signSession(env) {
   return new SignJWT({ v: parseInt(env.SESSION_VERSION || '1') })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setExpirationTime('30d')
+    .setExpirationTime('1d')
     .sign(secret)
 }
 
