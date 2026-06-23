@@ -29,8 +29,50 @@ function initEjercicios(workout) {
   }))
 }
 
+// Steppers de reps/intensidad/peso, compartidos por la serie activa y la edición
+// de una serie ya completada. Componente estable (definido fuera del render) para
+// que el textarea hermano no pierda foco entre tipeos.
+function SerieSteppers({ serie, onReps, onPeso }) {
+  return html`
+    <div class="serie-field">
+      <span class="serie-field-label">Repeticiones</span>
+      <div class="stepper">
+        <button type="button" class="stepper-btn"
+          onClick=${() => onReps(Math.max(1, serie.reps - 1))}>−</button>
+        <span class="stepper-value">${serie.reps}</span>
+        <button type="button" class="stepper-btn"
+          onClick=${() => onReps(serie.reps + 1)}>+</button>
+      </div>
+    </div>
+
+    ${serie.rpeProgramado != null && html`
+      <div class="serie-field">
+        <span class="serie-field-label">Intensidad</span>
+        <span class="serie-field-value">RPE @${serie.rpeProgramado}</span>
+      </div>
+    `}
+
+    <div class="serie-field">
+      <span class="serie-field-label">${serie.esPesoCorporal ? 'Peso' : 'Peso sugerido'}</span>
+      ${serie.esPesoCorporal
+        ? html`<span class="serie-field-value">peso corporal</span>`
+        : html`
+          <div class="stepper">
+            <button type="button" class="stepper-btn"
+              onClick=${() => onPeso(Math.max(0, (serie.pesoKg || 0) - 2.5))}>−</button>
+            <span class="stepper-value">${serie.pesoKg ?? 0} kg</span>
+            <button type="button" class="stepper-btn"
+              onClick=${() => onPeso((serie.pesoKg || 0) + 2.5)}>+</button>
+          </div>
+        `}
+    </div>
+  `
+}
+
 export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onDone, onSave, onLogout }) {
   const [ejercicios, setEjercicios] = useState(() => savedEjercicios || initEjercicios(workout))
+  // Clave `${ejIdx}-${serieIdx}` de la serie completada que se está reeditando, o null.
+  const [editKey, setEditKey] = useState(null)
   const [selectedEjIdx, setSelectedEjIdx] = useState(() => {
     const base = savedEjercicios || initEjercicios(workout)
     const idx = firstIncomplete(base)
@@ -183,6 +225,7 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
                 <div class="series-list">
                   ${ej.series.map((serie, serieIdx) => {
                     const isActiveSerie = isSelected && serieIdx === activeSerieIdx
+                    const isEditing = serie.completada && !isActiveSerie && editKey === `${ejIdx}-${serieIdx}`
                     return html`
                       <div class="serie-row ${serie.completada ? 'done' : ''} ${isActiveSerie ? 'active' : ''}" ref=${isActiveSerie ? activeSerieRef : null}>
                         ${isActiveSerie ? html`
@@ -192,38 +235,11 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
                               <span class="serie-active-total">de ${ej.series.length}</span>
                             </div>
 
-                            <div class="serie-field">
-                              <span class="serie-field-label">Repeticiones</span>
-                              <div class="stepper">
-                                <button type="button" class="stepper-btn"
-                                  onClick=${() => updateSerie(ejIdx, serieIdx, { reps: Math.max(1, serie.reps - 1) })}>−</button>
-                                <span class="stepper-value">${serie.reps}</span>
-                                <button type="button" class="stepper-btn"
-                                  onClick=${() => updateSerie(ejIdx, serieIdx, { reps: serie.reps + 1 })}>+</button>
-                              </div>
-                            </div>
-
-                            ${serie.rpeProgramado != null && html`
-                              <div class="serie-field">
-                                <span class="serie-field-label">Intensidad</span>
-                                <span class="serie-field-value">RPE @${serie.rpeProgramado}</span>
-                              </div>
-                            `}
-
-                            <div class="serie-field">
-                              <span class="serie-field-label">${serie.esPesoCorporal ? 'Peso' : 'Peso sugerido'}</span>
-                              ${serie.esPesoCorporal
-                                ? html`<span class="serie-field-value">peso corporal</span>`
-                                : html`
-                                  <div class="stepper">
-                                    <button type="button" class="stepper-btn"
-                                      onClick=${() => updateSerie(ejIdx, serieIdx, { pesoKg: Math.max(0, (serie.pesoKg || 0) - 2.5) })}>−</button>
-                                    <span class="stepper-value">${serie.pesoKg ?? 0} kg</span>
-                                    <button type="button" class="stepper-btn"
-                                      onClick=${() => updateSerie(ejIdx, serieIdx, { pesoKg: (serie.pesoKg || 0) + 2.5 })}>+</button>
-                                  </div>
-                                `}
-                            </div>
+                            <${SerieSteppers}
+                              serie=${serie}
+                              onReps=${reps => updateSerie(ejIdx, serieIdx, { reps })}
+                              onPeso=${pesoKg => updateSerie(ejIdx, serieIdx, { pesoKg })}
+                            />
 
                             <div class="serie-field">
                               <span class="serie-field-label">Descanso</span>
@@ -246,6 +262,35 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
                               onClick=${() => handleSerieDone(ejIdx, serieIdx)}
                             >Serie completada</button>
                           </div>
+                        ` : isEditing ? html`
+                          <div class="serie-active-block">
+                            <div class="serie-active-header">
+                              <span class="serie-active-title">Serie ${serie.numero}</span>
+                              <span class="serie-active-total">de ${ej.series.length}</span>
+                            </div>
+
+                            <${SerieSteppers}
+                              serie=${serie}
+                              onReps=${reps => updateSerie(ejIdx, serieIdx, { reps })}
+                              onPeso=${pesoKg => updateSerie(ejIdx, serieIdx, { pesoKg })}
+                            />
+
+                            <textarea
+                              class="input-field"
+                              placeholder="Comentario de la serie (opcional)"
+                              value=${serie.comentario}
+                              onInput=${e => updateSerie(ejIdx, serieIdx, { comentario: e.target.value })}
+                              rows="2"
+                              style="resize:none"
+                            />
+
+                            <button
+                              type="button"
+                              class="btn-secondary"
+                              style="margin-top:8px"
+                              onClick=${() => setEditKey(null)}
+                            >Listo</button>
+                          </div>
                         ` : html`
                           <span class="serie-label">Serie ${serie.numero}</span>
                           ${serie.completada ? html`
@@ -256,6 +301,8 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
                               ${serie.esPesoCorporal ? html` · peso corporal` : ''}
                             </span>
                             <span class="serie-check">✓</span>
+                            <button type="button" class="btn-ghost small serie-edit-btn"
+                              onClick=${() => setEditKey(`${ejIdx}-${serieIdx}`)}>Editar</button>
                           ` : html`
                             <span class="serie-pending-data">
                               ${serie.reps} repeticiones
