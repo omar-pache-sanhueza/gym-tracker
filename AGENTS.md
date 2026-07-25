@@ -82,12 +82,12 @@ apps-script/
 
 ## Gotchas conocidos
 
-- **Tiempo de descanso en la planilla:** viene como `" 2 min"`, `"1,5 min"`, `"1 min"`. Hay que trimmear, reemplazar coma por punto, parsear, multiplicar por 60. El parser ya lo hace; no inventes uno paralelo.
+- **Tiempo de descanso en la planilla:** desde el formato nuevo (Mesociclo 3 en adelante) la columna se rotula `Descanso entre series (min)` y entrega un número desnudo en minutos (`4` → 240 s, `2,5` → 150 s). El formato viejo usaba string con sufijo (`" 2 min"`, `"1,5 min"`, `"30 s"`). El parser (`parseRestSeconds`) soporta ambos; no inventes uno paralelo.
 - **Peso `-` (em-dash) en la planilla:** indica ejercicios de peso corporal. El input de peso se oculta. No se calcula ni muestra ningún indicador agregado de carga para esa serie.
 - **Wake Lock en iOS:** la API existe desde iOS 16.4, pero Safari la revoca al cambiar de tab. Manejar el evento `visibilitychange` y re-solicitar al volver al foreground.
 - **Cronómetro general durante descanso:** debe seguir corriendo, NO pausarse cuando el overlay del descanso aparece encima.
 - **Cookie de sesión:** `SameSite=Strict` rompe el login si se prueba la API desde un dominio distinto al del frontend. Para pruebas cross-origin usar `SameSite=Lax` solo en dev.
-- **Fechas de la planilla:** vienen como `Lunes 11/05/2026` dentro del encabezado del día. El parser usa regex `/(\d{2})\/(\d{2})\/(\d{4})/`. La comparación con "hoy" se hace en zona horaria `America/Santiago`.
+- **Fechas de la planilla:** desde Mesociclo 3 la fecha vive en la celda **contigua** al título del día (`weekCol+1`), como `lunes 27/07/2026`; el formato viejo la embebía en el propio título (`Día 1 - Piernas A:  Lunes 11/05/2026`). El parser extrae `DD/MM/AAAA` con regex `/(\d{2})\/(\d{2})\/(\d{4})/` de la celda inline si existe y, si no, de la contigua. La comparación con "hoy" se hace en zona horaria `America/Santiago`.
 - **Cuota de Apps Script:** 100 mails/día con Gmail gratis. No agrupar envíos ni hacer reintentos automáticos agresivos.
 
 ## Antes de proponer un PR
