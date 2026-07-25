@@ -102,3 +102,84 @@ describe('findWorkoutInSheet (formato nuevo)', () => {
     expect(plancha[1].repeticionesProgramadas).toBe('60 seg / lado')
   })
 })
+
+// Snapshot de la hoja real "Mesociclo 3 Fuerza II" (arranca el 27/07/2026).
+// Respecto a "Mesociclo 3 Fuerza" el formato agrega: fila de bienestar con
+// valores (5×6) en vez de vacía, narrativa en columnas A/B (Objetivo,
+// Principios, Plan) a la izquierda del bloque de semana, y filas de cierre con
+// "Tonelaje de la sesión (kg):" y "sRPE en unidades arbitrarias (UA):". Ninguno
+// rompe el parseo, pero el snapshot lo blinda (regla #6 de AGENTS.md).
+// `col` coloca celdas por índice explícito para poder poblar las columnas A/B.
+const col = map => {
+  const max = Math.max(...Object.keys(map).map(Number))
+  const r = new Array(max + 1).fill('')
+  for (const [k, v] of Object.entries(map)) r[k] = v
+  return r
+}
+
+const SHEET_M3F2 = [
+  col({ 0: 'Mesociclo 3', 1: 'Fuerza II', 3: 'Semana 1' }),
+  col({ 0: 'Duración', 1: '5 semanas', 3: 'Día 1 - Banca Pesada', 4: 'lunes 27/07/2026',
+        5: 'Calidad del Sueño', 6: 'Motivación', 7: 'Energía', 8: 'Nivel de Estrés',
+        9: 'Salud articular', 10: 'Recuperación muscular', 11: 'Comentarios pre entreno' }),
+  col({ 0: 'Objetivo', 1: 'Consolidar la oleada 2 de fuerza',
+        5: '5', 6: '5', 7: '5', 8: '5', 9: '5', 10: '5' }),
+  col({ 3: 'Orden', 4: 'Ejercicio', 5: 'Series', 6: 'Repeticiones', 7: 'RPE', 8: 'Peso (kg)',
+        9: 'Descanso entre series (min)', 10: 'Tonelaje (kg)', 11: 'Comentarios del ejercicio' }),
+  col({ 3: '1', 4: 'Press banca plano', 5: '4', 6: '5 top / 5 back-off', 7: '8', 8: '77,5 / 70',
+        9: '4', 10: '1437,5', 11: 'Aproximaciones: barra 20×10 / 40×5 / 55×3 / 70×1 - ' }),
+  col({ 3: '2', 4: 'Remo gironda', 5: '4', 6: '6', 7: '8', 8: '77,6', 9: '2,5', 10: '1862,4' }),
+  col({ 0: 'Principios', 1: '+2,5 kg en principales',
+        3: '3', 4: 'Facepulls', 5: '3', 6: '15', 7: '8', 8: '32,2', 9: '2,5', 10: '1449' }),
+  col({ 3: '4', 4: 'Elevaciones laterales', 5: '2', 6: '15', 7: '8', 8: '7,5', 9: '2,5', 10: '225' }),
+  col({ 3: 'Duración sesión incluído calentamiento (min):', 4: '0', 5: 'RPE global:', 6: '8',
+        8: 'Tonelaje de la sesión (kg):', 10: '4973,9',
+        11: 'sRPE en unidades arbitrarias (UA):', 12: '0' }),
+  col({ 3: 'Comentarios post entreno:' }),
+  col({ 0: 'Plan', 1: 'Sem 1-3: oleada 2 (RPE 8 → 9)' }),
+  // Día 2: casos de peso corporal, duración como reps y "/ lado" no top/back-off.
+  col({ 3: 'Día 2 - Sentadilla Pesada', 4: 'martes 28/07/2026',
+        5: 'Calidad del Sueño', 6: 'Motivación', 7: 'Energía', 8: 'Nivel de Estrés',
+        9: 'Salud articular', 10: 'Recuperación muscular', 11: 'Comentarios pre entreno' }),
+  col({ 5: '5', 6: '5', 7: '5', 8: '5', 9: '5', 10: '5' }),
+  col({ 3: 'Orden', 4: 'Ejercicio', 5: 'Series', 6: 'Repeticiones', 7: 'RPE', 8: 'Peso (kg)',
+        9: 'Descanso entre series (min)', 10: 'Tonelaje (kg)', 11: 'Comentarios del ejercicio' }),
+  col({ 3: '1', 4: 'Sentadilla libre (barra baja)', 5: '4', 6: '5 top / 5 back-off', 7: '8',
+        8: '77,5 / 70', 9: '4', 10: '1437,5', 11: 'Stance cerrado' }),
+  col({ 3: '2', 4: 'Plancha frontal', 5: '2', 6: '1 min', 7: '—', 8: '—', 9: '1', 10: '—' }),
+  col({ 3: '3', 4: 'Press Pallof', 5: '2', 6: '10 / lado', 7: '—', 8: '—', 9: '1', 10: '—' }),
+  col({ 3: 'Duración sesión incluído calentamiento (min):', 4: '0', 5: 'RPE global:', 6: '8' }),
+]
+
+describe('findWorkoutInSheet (hoja real Mesociclo 3 Fuerza II)', () => {
+  it('lista ambos días con fecha y nombre correctos', () => {
+    expect(findAllDatesInSheet(SHEET_M3F2, 'Mesociclo 3 Fuerza II')).toEqual([
+      { fecha: '2026-07-27', diaNumero: 1, diaNombre: 'Banca Pesada', mesociclo: 'Mesociclo 3 Fuerza II' },
+      { fecha: '2026-07-28', diaNumero: 2, diaNombre: 'Sentadilla Pesada', mesociclo: 'Mesociclo 3 Fuerza II' },
+    ])
+  })
+
+  it('parsea el Día 1 sin dejarse confundir por la narrativa ni la fila sRPE', () => {
+    const wd = findWorkoutInSheet(SHEET_M3F2, '2026-07-27', 'Mesociclo 3 Fuerza II')
+    expect(wd.diaNombre).toBe('Banca Pesada')
+    expect(wd.ejercicios).toHaveLength(4)
+    // "sRPE en unidades arbitrarias (UA):" NO debe capturarse como RPE global.
+    expect(wd.rpeGlobalSugerido).toBe(8)
+    // El ejercicio con texto en columnas A/B ("Principios") se parsea igual.
+    expect(wd.ejercicios[2].nombre).toBe('Facepulls')
+    const top = wd.ejercicios[0].seriesProgramadas
+    expect(top[0]).toMatchObject({ repeticionesProgramadas: 5, pesoSugeridoKg: 77.5, descansoPrescritoSeg: 240 })
+    expect(top[1]).toMatchObject({ repeticionesProgramadas: 5, pesoSugeridoKg: 70 })
+    expect(top[0].comentarioSugerido).not.toContain('1437')
+  })
+
+  it('parsea el Día 2: peso corporal (—), duración como reps y "/ lado" sin dividir', () => {
+    const wd = findWorkoutInSheet(SHEET_M3F2, '2026-07-28', 'Mesociclo 3 Fuerza II')
+    const plancha = wd.ejercicios[1].seriesProgramadas
+    expect(plancha[0].repeticionesProgramadas).toBe('1 min')
+    expect(plancha[0].pesoSugeridoKg).toBeNull()
+    const pallof = wd.ejercicios[2].seriesProgramadas
+    expect(pallof[0].repeticionesProgramadas).toBe('10 / lado')
+    expect(pallof[1].repeticionesProgramadas).toBe('10 / lado')
+  })
+})
