@@ -392,7 +392,7 @@ function ExitConfirmation({ onCancel, onConfirm }) {
       >
         <h2 id="exit-confirm-title">¿Salir del entrenamiento?</h2>
         <p id="exit-confirm-description">
-          Si sales ahora, se borrará todo el progreso de esta sesión.
+          Si sales ahora, se perderá todo el progreso de esta sesión.
         </p>
         <div class="confirm-actions">
           <button ref=${continueButtonRef} class="btn-primary" onClick=${onCancel}>

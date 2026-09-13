@@ -488,7 +488,7 @@ Como regla general, ningún texto funcional o informativo de la interfaz debe mo
 
 **RF-23.** El estado del entreno en curso (bienestar pre, series completadas, pesos/repeticiones, comentarios) debe persistirse en `localStorage` después de cada acción y restaurarse al abrir la app si la sesión no fue cerrada con éxito.
 
-**RF-24.** Debe existir un botón `Cerrar sesión` accesible desde el menú/header de cualquier pantalla autenticada. Si se presiona durante un entrenamiento en curso, debe mostrarse una confirmación que advierta que se borrará el progreso de la sesión; cerrar sesión y limpiar `localStorage` solo ocurre tras confirmar explícitamente la salida.
+**RF-24.** Debe existir un botón `Cerrar sesión` accesible desde el menú/header de cualquier pantalla autenticada. Si se presiona durante un entrenamiento en curso, debe mostrarse una confirmación que advierta que se perderá el progreso de la sesión; cerrar sesión y limpiar `localStorage` solo ocurre tras confirmar explícitamente la salida.
 
 **RF-25.** Toda la interfaz debe respetar el sistema de diseño definido en la sección 8: tema oscuro `--bg-base`, acento `--accent`, tipografía sistema, geometría y componentes especificados.
 
