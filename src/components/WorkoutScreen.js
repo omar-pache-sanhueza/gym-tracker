@@ -1,5 +1,5 @@
 import { html } from 'htm/preact'
-import { useState, useEffect, useRef } from 'preact/hooks'
+import { useState, useEffect, useRef, useCallback } from 'preact/hooks'
 import { useElapsedSeconds, useCountdown, fmtHMS, fmtMS } from '../lib/timer.js'
 import { scheduleBeepIn, beepNow, unlockAudio, vibrate } from '../lib/audio.js'
 
@@ -79,6 +79,8 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
     return idx >= 0 ? idx : 0
   })
   const [rest, setRest] = useState(null)
+  const [showExitConfirm, setShowExitConfirm] = useState(false)
+  const closeExitConfirm = useCallback(() => setShowExitConfirm(false), [])
   const wakeLockRef = useRef(null)
   const activeSerieRef = useRef(null)
 
@@ -194,7 +196,7 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
       <header class="workout-header">
         <span class="workout-timer">${fmtHMS(elapsed)}</span>
         <span class="workout-header-day">Día ${workout.diaNumero} - ${workout.diaNombre}</span>
-        <button class="btn-ghost small" onClick=${onLogout}>Salir</button>
+        <button class="btn-ghost small" onClick=${() => setShowExitConfirm(true)}>Salir</button>
       </header>
 
       <div class="workout-content">
@@ -354,6 +356,53 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
           onClose=${() => { setRest(null); scrollActiveIntoView() }}
         />
       `}
+
+      ${showExitConfirm && html`
+        <${ExitConfirmation}
+          onCancel=${closeExitConfirm}
+          onConfirm=${onLogout}
+        />
+      `}
+    </div>
+  `
+}
+
+function ExitConfirmation({ onCancel, onConfirm }) {
+  const continueButtonRef = useRef(null)
+
+  useEffect(() => {
+    continueButtonRef.current?.focus()
+
+    const handleKeyDown = event => {
+      if (event.key === 'Escape') onCancel()
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [onCancel])
+
+  return html`
+    <div class="confirm-overlay" role="presentation">
+      <div
+        class="confirm-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="exit-confirm-title"
+        aria-describedby="exit-confirm-description"
+      >
+        <h2 id="exit-confirm-title">¿Salir del entrenamiento?</h2>
+        <p id="exit-confirm-description">
+          Si sales ahora, se borrará todo el progreso de esta sesión.
+        </p>
+        <div class="confirm-actions">
+          <button ref=${continueButtonRef} class="btn-primary" onClick=${onCancel}>
+            Continuar entrenando
+          </button>
+          <button class="btn-danger" onClick=${onConfirm}>
+            Salir y perder progreso
+          </button>
+        </div>
+      </div>
     </div>
   `
 }
