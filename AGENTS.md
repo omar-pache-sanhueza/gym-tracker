@@ -74,7 +74,7 @@ apps-script/
 2. **NUNCA committear secretos.** Todo va en variables de entorno de Cloudflare. El archivo `.env.local` está en `.gitignore`.
 3. **NUNCA cambiar el proveedor de email.** Es Apps Script por decisión arquitectónica (ver `docs/SPEC.md` §5.3 y §14). Resend, SendGrid, SMTP, etc. están descartados.
 4. **Sigue el sistema de diseño** definido en `docs/SPEC.md` §8 al pie de la letra. El verde neón (`--accent`) se reserva para acción y estado activo, NO decora libremente.
-5. **Mobile-first siempre.** El target es Safari iOS en iPhone XR (414×896 pt). Si algo se ve bien en desktop pero mal en móvil, se prioriza el móvil.
+5. **Mobile-first siempre.** El target principal es Safari iOS en iPhone 12 (390×844 pt). El iPhone XR (414×896 pt) queda como dispositivo secundario/de emergencia. Si algo se ve bien en desktop pero mal en móvil, se prioriza el iPhone 12 sin romper la compatibilidad con el XR.
 6. **El parser de la planilla es frágil.** Antes de modificar `functions/lib/parser.js`, correr los tests con el snapshot actual. Si cambia el formato de la planilla, agregar un nuevo snapshot - no romper los existentes.
 7. **Pre-llenar campos desde la planilla.** Cuando se renderiza un día, los inputs de serie (reps, peso sugerido editable, RPE programado, descanso) deben venir con los valores que dice la planilla, no con defaults inventados.
 8. **No reutilizar bibliotecas de componentes de UI.** Todos los componentes (botones, estrellas, sliders, inputs) son propios. NO instalar Material UI, Radix, Headless UI, shadcn, etc.
@@ -97,7 +97,7 @@ apps-script/
 3. La feature está descrita en `docs/SPEC.md` o se agregó al SPEC en el mismo PR.
 4. No hay secretos hardcodeados (revisar con `git diff` antes del commit).
 5. Si tocaste el parser, agregaste/actualizaste el snapshot de tests.
-6. Si tocaste algo del sistema de diseño, las pantallas afectadas se verificaron en iPhone XR (o emulador con viewport 414×896).
+6. Si tocaste algo del sistema de diseño, las pantallas afectadas se verificaron primero en iPhone 12 (o emulador con viewport 390×844) y, como control secundario, en iPhone XR (414×896).
 7. Si agregaste un endpoint nuevo en `/api/*`, está documentado en `docs/SPEC.md` §14.
 
 ## Cuando dudes, pregunta al humano antes de:

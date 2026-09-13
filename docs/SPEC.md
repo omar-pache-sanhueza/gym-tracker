@@ -3,6 +3,7 @@
 
 **Versión:** 1.0
 **Fecha:** 12 de mayo de 2026
+**Última actualización:** 13 de septiembre de 2026
 **Autor:** Omar Paché
 **Asistente de diseño:** Claude
 
@@ -10,7 +11,7 @@
 
 ## 1. Resumen ejecutivo
 
-**Gym Tracker** es una aplicación **web** personal, mobile-first, accesible desde Safari del iPhone XR y navegadores modernos. Tiene un único usuario (Omar) y un único método de acceso (contraseña). La fuente de verdad del plan de entrenamiento es una Google Sheet existente que la app **solo lee**; al finalizar cada sesión la app envía un resumen por email a `omar.pache@gmail.com` usando un webhook de Google Apps Script alojado en la cuenta Gmail del propio Omar. La app no escribe en la planilla ni guarda historial interno: el correo es el registro permanente.
+**Gym Tracker** es una aplicación **web** personal, mobile-first, optimizada para Safari del iPhone 12. El iPhone XR se mantiene como dispositivo secundario/de emergencia. Tiene un único usuario (Omar) y un único método de acceso (contraseña). La fuente de verdad del plan de entrenamiento es una Google Sheet existente que la app **solo lee**; al finalizar cada sesión la app envía un resumen por email a `omar.pache@gmail.com` usando un webhook de Google Apps Script alojado en la cuenta Gmail del propio Omar. La app no escribe en la planilla ni guarda historial interno: el correo es el registro permanente.
 
 El propósito es reemplazar el flujo manual actual (mirar la planilla en Drive, cronometrar con el reloj del teléfono y anotar pesos/repeticiones a mano) por una interfaz táctil optimizada para móvil con cronómetro general, descansos por serie y registro guiado de lo ejecutado. El usuario en algún momento del día pasará en limpio de forma manual en la planilla lo enviado al correo.
 
@@ -23,7 +24,7 @@ La app no debe mostrar indicadores agregados de carga como volumen total, peso t
 ## 2. Objetivos
 
 ### 2.1 Objetivo principal
-Que Omar pueda llegar al gimnasio, abrir Gym Tracker en Safari de su iPhone XR, autenticarse con una contraseña, ver la sesión que le toca hoy según su planilla, ejecutarla con cronómetros integrados y enviar un resumen por correo al terminar - todo sin tocar la planilla original ni otra app.
+Que Omar pueda llegar al gimnasio, abrir Gym Tracker en Safari de su iPhone 12, autenticarse con una contraseña, ver la sesión que le toca hoy según su planilla, ejecutarla con cronómetros integrados y enviar un resumen por correo al terminar - todo sin tocar la planilla original ni otra app. El iPhone XR conserva compatibilidad como respaldo.
 
 ### 2.2 Objetivos secundarios
 - Operar a costo **estrictamente cero** al mes.
@@ -85,7 +86,7 @@ Que Omar pueda llegar al gimnasio, abrir Gym Tracker en Safari de su iPhone XR, 
 ### 5.1 Frontend
 - **HTML + CSS + JavaScript** puro como base.
 - **Preact** (3 KB) más **HTM** (sin build step) para reactividad. Alternativa: vanilla JS con un patrón de componentes manual.
-- **CSS personalizado** con variables CSS y `safe-area-inset-*` para respetar el notch del iPhone XR. Sin frameworks de UI.
+- **CSS personalizado** con variables CSS y `safe-area-inset-*` para respetar el notch y el gesto inferior de los iPhone objetivo. Sin frameworks de UI.
 - **Vite** como bundler (genera un único `index.html` + assets minificados).
 - **Web APIs:** Wake Lock API (mantener pantalla encendida), Vibration API, Web Audio API (beep al fin del descanso), localStorage (estado de la sesión en curso).
 - **PWA:** manifest.json + service worker mínimo para shell + `apple-touch-icon` para iOS.
@@ -157,7 +158,7 @@ npm run build
 wrangler pages deploy ./dist
 ```
 
-### 6.3 Pruebas en el iPhone XR real
+### 6.3 Pruebas en los iPhone objetivo
 Cloudflare Pages genera una URL preview en cada push (`<hash>.<proyecto>.pages.dev`). Para probar en el iPhone:
 1. Hacer commit + push de la rama de trabajo.
 2. Esperar ~30 s a que el build termine.
@@ -493,7 +494,7 @@ Regla de uso del acento: el verde neón se usa con moderación. En una pantalla 
 
 ## 11. Requisitos no funcionales (RNF)
 
-**RNF-01 – Plataforma objetivo.** Debe funcionar sin defectos visuales o de interacción en Safari iOS 17+ sobre iPhone XR (414×896 pt, notch superior, gesto inferior). Otros navegadores son "best effort", pero no se invierte tiempo extra para soportarlos en v1. **El producto es una web app - no requiere distribución por App Store ni firma de código.**
+**RNF-01 – Plataforma objetivo.** Debe funcionar sin defectos visuales o de interacción en Safari iOS 17+ sobre iPhone 12 (390×844 pt, objetivo principal) y mantener compatibilidad con iPhone XR (414×896 pt, dispositivo secundario/de emergencia). Ambos tienen notch superior y gesto inferior. Otros navegadores son "best effort", pero no se invierte tiempo extra para soportarlos en v1. **El producto es una web app - no requiere distribución por App Store ni firma de código.**
 
 **RNF-02 – Tamaño táctil.** Todos los controles interactivos deben tener al menos 44×44 pt de área tappable.
 
@@ -893,7 +894,7 @@ function jsonResponse(obj) {
 
 Para considerar la v1 lista para producción, todos estos casos deben pasar:
 
-1. Abrir la URL en iPhone XR muestra el login sin desbordes ni elementos cortados por el notch, con el tema oscuro, nombre `Gym Tracker` y el botón `Entrar` en verde neón.
+1. Abrir la URL en iPhone 12 muestra el login sin desbordes ni elementos cortados por el notch, con el tema oscuro, nombre `Gym Tracker` y el botón `Entrar` en verde neón; el mismo flujo sigue siendo usable en el iPhone XR de respaldo.
 2. Password correcto → entra; incorrecto → mensaje de error claro; 3 fallos → bloqueo de 5 min.
 3. En lunes/martes/jueves/viernes a las 5:55 am, la pantalla principal muestra el día de hoy con todos los ejercicios y valores prellenados desde la planilla.
 4. En miércoles/sábado/domingo, la app muestra mensaje de día de descanso y el próximo entreno calculado.
@@ -952,7 +953,7 @@ Repo, cuenta Cloudflare, cuenta Google Cloud, Apps Script publicado, secretos ge
 - Email HTML cuidado.
 - Confirmación + reset.
 - PWA manifest + service worker + apple-touch-icon.
-- Pruebas en iPhone XR real.
+- Pruebas en iPhone 12 real y control de compatibilidad en iPhone XR.
 
 ### Fase 4 – Endurecimiento (medio día)
 - CSP, HSTS, headers de seguridad.

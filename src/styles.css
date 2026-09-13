@@ -130,6 +130,8 @@ body {
   cursor: pointer;
   font-family: inherit;
   font-size: 15px;
+  min-width: 44px;
+  min-height: 44px;
   padding: 8px;
   -webkit-tap-highlight-color: transparent;
 }
@@ -219,8 +221,8 @@ body {
   cursor: pointer;
   font-size: 26px;
   line-height: 1;
-  min-width: 32px;
-  min-height: 40px;
+  min-width: 44px;
+  min-height: 44px;
   padding: 0;
   display: flex;
   align-items: center;
@@ -248,7 +250,15 @@ body {
   color: var(--accent);
   min-width: 80px;
 }
-.workout-header-day { color: var(--text-secondary); font-size: 15px; flex: 1; }
+.workout-header-day {
+  color: var(--text-secondary);
+  font-size: 15px;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
 /* ─── Workout content ─── */
 .workout-content {
@@ -337,8 +347,8 @@ body {
   cursor: pointer;
   font-size: 20px;
   line-height: 1;
-  min-width: 40px;
-  height: 40px;
+  min-width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -352,6 +362,21 @@ body {
   font-variant-numeric: tabular-nums;
   min-width: 48px;
   text-align: center;
+}
+
+/* Ajustes para el ancho del iPhone 12 (390 pt). */
+@media (max-width: 400px) {
+  .workout-header { gap: 8px; }
+  .stars-row { gap: 0; }
+  .serie-field { gap: 8px; }
+  .serie-field-label { font-size: 14px; }
+  .serie-field .stepper { gap: 6px; }
+  .serie-field .stepper-value {
+    width: 96px;
+    min-width: 96px;
+    padding: 0;
+    font-size: 20px;
+  }
 }
 
 .rpe-badge {
@@ -460,8 +485,10 @@ body {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: 4px;
+  height: 44px;
+  padding: 20px 0;
   background: var(--bg-elev-2);
+  background-clip: content-box;
   border-radius: 2px;
   outline: none;
 }
