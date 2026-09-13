@@ -218,7 +218,7 @@ export default function WorkoutScreen({ workout, inicioISO, savedEjercicios, onD
                 ${isDone
                   ? html`<span class="exercise-done-check">✓</span>`
                   : isIncomplete
-                    ? html`<span style="color:var(--text-tertiary);font-size:12px">Toca para ir aquí</span>`
+                    ? html`<span class="exercise-jump-hint">Toca para ir aquí</span>`
                     : null
                 }
               </div>

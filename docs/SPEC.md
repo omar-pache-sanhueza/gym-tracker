@@ -379,12 +379,14 @@ Regla de uso del acento: el verde neón se usa con moderación. En una pantalla 
 |-----|--------|------|
 | Display (cronómetro general) | 40 px | 600 |
 | Display (cronómetro descanso) | 88 px | 700 |
-| Title (encabezados de pantalla) | 22 px | 600 |
-| Heading (nombre de ejercicio) | 18 px | 600 |
-| Body | 16 px | 400 |
-| Body emphasized | 16 px | 600 |
-| Caption | 13 px | 400 |
+| Title (encabezados de pantalla) | 24 px | 600 |
+| Heading (nombre de ejercicio) | 20 px | 600 |
+| Body | 17 px | 400 |
+| Body emphasized | 18 px | 600 |
+| Caption | 15 px | 400 |
 | Number input (peso/reps) | 24 px | 600, tabular |
+
+Como regla general, ningún texto funcional o informativo de la interfaz debe mostrarse por debajo de 15 px. El detalle compacto del resumen previo se mantiene en 16 px para conservar series, repeticiones, RPE y peso en una sola línea.
 
 ### 8.3 Espaciado y geometría
 - Escala de spacing: 4, 8, 12, 16, 20, 24, 32, 48 px.
@@ -544,6 +546,8 @@ Convención: el header sticky mide ~56 pt y respeta `safe-area-inset-top`. El co
 ```
 
 ### 12.2 Resumen del día (con entreno)
+
+La jerarquía debe ser legible en el iPhone 12: mesociclo/semana en 17 px, nombre del día en 26 px y nombre de cada ejercicio en 20 px. El detalle de cada ejercicio usa 16 px y se mantiene en una sola línea con el formato compacto `N series · N reps · RPE @N · N kg`; para ejercicios de peso corporal, el último valor se abrevia como `corporal`. En días de seis o más ejercicios se activa automáticamente una densidad compacta (nombre del día 24 px, ejercicios 18 px y espacios reducidos) para mantener visible el resumen completo sin scroll, sin reducir el detalle de 16 px ni dividirlo en varias líneas.
 
 ```
 ┌─────────────────────────────┐

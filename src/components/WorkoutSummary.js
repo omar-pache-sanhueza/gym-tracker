@@ -45,10 +45,10 @@ export default function WorkoutSummary({ workout, onStart, onLogout, onSelectDay
     `
   }
 
-  const primeraSerie = workout.ejercicios[0]?.seriesProgramadas[0]
+  const denseSummary = workout.ejercicios.length >= 6
 
   return html`
-    <div class="screen-padded">
+    <div class="screen-padded workout-summary-screen ${denseSummary ? 'dense' : ''}">
       <header class="screen-header">
         <div>
           <p class="screen-header-meta">${workout.mesociclo} · Semana ${workout.semana}</p>
@@ -62,16 +62,16 @@ export default function WorkoutSummary({ workout, onStart, onLogout, onSelectDay
           const s = ej.seriesProgramadas[0]
           return html`
             <div class="exercise-preview-item">
-              <span class="exercise-preview-num">${ej.orden}.</span>
-              <div>
+              <div class="exercise-preview-heading">
+                <span class="exercise-preview-num">${ej.orden}.</span>
                 <p class="exercise-preview-name">${ej.nombre}</p>
-                <p class="exercise-preview-meta">
-                  ${ej.seriesProgramadas.length} series
-                  · ${s?.repeticionesProgramadas} repeticiones
-                  ${s?.rpeProgramado != null ? ` RPE @${s.rpeProgramado}` : ''}
-                  ${s?.pesoSugeridoKg != null ? ` · ${s.pesoSugeridoKg} kg` : ' · peso corporal'}
-                </p>
               </div>
+              <p class="exercise-preview-meta">
+                ${ej.seriesProgramadas.length} series
+                · ${s?.repeticionesProgramadas} reps
+                ${s?.rpeProgramado != null ? ` · RPE @${s.rpeProgramado}` : ''}
+                ${s?.pesoSugeridoKg != null ? ` · ${s.pesoSugeridoKg} kg` : ' · corporal'}
+              </p>
             </div>
           `
         })}
