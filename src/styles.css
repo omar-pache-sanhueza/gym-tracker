@@ -181,9 +181,37 @@ body {
 .exercise-preview-name { font-size: 17px; font-weight: 500; margin-bottom: 4px; }
 .exercise-preview-meta { color: var(--text-secondary); font-size: 15px; }
 
-.rest-day { text-align: center; padding: 48px 0; }
-.rest-day-icon { font-size: 56px; display: block; margin-bottom: 16px; }
-.rest-day h2 { font-size: 20px; font-weight: 600; }
+.rest-day-screen .screen-header-title { font-size: 24px; }
+.rest-day-screen .btn-ghost { font-size: 17px; }
+.rest-day { text-align: center; padding: 40px 0; }
+.rest-day-date { color: var(--text-secondary); font-size: 17px; margin-bottom: 16px; }
+.rest-day-icon { font-size: 64px; display: block; margin-bottom: 20px; }
+.rest-day h2 { font-size: 28px; font-weight: 700; line-height: 1.2; }
+.rest-day-next {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 20px;
+  color: var(--text-secondary);
+  font-size: 17px;
+  line-height: 1.5;
+}
+.rest-day-next strong { color: var(--text-primary); font-size: 20px; }
+.rest-day .btn-secondary { font-size: 18px; }
+.rest-day-picker { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+.rest-day-option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
+  min-height: 64px;
+  height: auto;
+  padding: 10px 16px;
+  text-align: left;
+}
+.rest-day-option-name { color: var(--text-primary); font-size: 18px; font-weight: 600; }
+.rest-day-option-date { color: var(--text-secondary); font-size: 17px; }
 
 /* ─── Bienestar ─── */
 .bienestar-form { display: flex; flex-direction: column; gap: 14px; }

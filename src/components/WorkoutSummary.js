@@ -6,20 +6,20 @@ export default function WorkoutSummary({ workout, onStart, onLogout, onSelectDay
 
   if (workout.tipo === 'descanso') {
     return html`
-      <div class="screen-padded">
+      <div class="screen-padded rest-day-screen">
         <header class="screen-header">
           <span class="screen-header-title">Gym Tracker</span>
           <button class="btn-ghost" onClick=${onLogout}>Salir</button>
         </header>
         <div class="rest-day">
-          <p class="screen-header-meta" style="margin-bottom:12px">${formatDate(todayISO())}</p>
+          <p class="rest-day-date">${formatDate(todayISO())}</p>
           <span class="rest-day-icon">🛌</span>
           <h2>Hoy es día de descanso</h2>
           ${workout.proximo && html`
-            <p class="msg-secondary" style="margin-top:16px;line-height:1.6">
-              Próximo entreno:<br/>
-              <strong style="color:var(--text-primary)">${workout.proximo.diaNombre}</strong>
-              · ${formatDate(workout.proximo.fecha)}
+            <p class="rest-day-next">
+              <span>Próximo entrenamiento</span>
+              <strong>${workout.proximo.diaNombre}</strong>
+              <span>${formatDate(workout.proximo.fecha)}</span>
             </p>
           `}
           <button
@@ -28,15 +28,14 @@ export default function WorkoutSummary({ workout, onStart, onLogout, onSelectDay
             onClick=${() => setShowPicker(p => !p)}
           >${showPicker ? 'Cancelar' : 'Iniciar entrenamiento de otro día'}</button>
           ${showPicker && html`
-            <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+            <div class="rest-day-picker">
               ${[workout.anterior, workout.proximo].filter(Boolean).map(d => html`
                 <button
-                  class="btn-secondary"
-                  style="width:100%;text-align:left;padding:12px 16px"
+                  class="btn-secondary rest-day-option"
                   onClick=${() => onSelectDay(d.fecha)}
                 >
-                  <span style="color:var(--text-primary);font-weight:500">${d.diaNombre}</span>
-                  <span class="msg-secondary" style="margin-left:8px">${formatDate(d.fecha)}</span>
+                  <span class="rest-day-option-name">${d.diaNombre}</span>
+                  <span class="rest-day-option-date">${formatDate(d.fecha)}</span>
                 </button>
               `)}
             </div>

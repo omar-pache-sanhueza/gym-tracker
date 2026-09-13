@@ -573,6 +573,8 @@ Convención: el header sticky mide ~56 pt y respeta `safe-area-inset-top`. El co
 
 ### 12.3 Resumen del día (día de descanso)
 
+La pantalla de descanso debe privilegiar la legibilidad: mensaje principal en tamaño de título (28 px), fecha y datos del próximo entrenamiento en al menos 17 px, y opciones de otros días con una altura táctil mínima de 64 px.
+
 ```
 ┌─────────────────────────────┐
 │ Mié 13 May                   │
