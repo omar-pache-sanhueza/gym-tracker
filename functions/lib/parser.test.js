@@ -183,3 +183,36 @@ describe('findWorkoutInSheet (hoja real Mesociclo 3 Fuerza II)', () => {
     expect(pallof[1].repeticionesProgramadas).toBe('10 / lado')
   })
 })
+
+// Snapshot de la nueva prescripción en Semana 4: tres fases de repeticiones,
+// RPE y peso en una sola fila. Las fases suman las 5 series de la columna Series.
+const week4Col = 36
+const week4 = (...cells) => new Array(week4Col).fill('').concat(cells)
+const SHEET_M4_INTENSIFICACION_II = [
+  week4('Semana 4'),
+  week4('Día 1 - Banca Pesada:', 'lunes 26/10/2026'),
+  week4(''),
+  week4('Orden', 'Ejercicio', 'Series', 'Repeticiones', 'RPE', 'Peso (kg)',
+    'Descanso entre series (min)', 'Tonelaje (kg)'),
+  week4('1', 'Press banca plano', '5', '1x1 single / 1x2 doble / 3x3 back-offs',
+    '7,5-8 / 8 / 7-7,5', '85 / 82 / 73,5', '4', '910,5'),
+]
+
+describe('findWorkoutInSheet (tres fases en Semana 4)', () => {
+  it('encuentra la fecha en la cuarta semana', () => {
+    expect(findAllDatesInSheet(SHEET_M4_INTENSIFICACION_II, 'Mesociclo 4 Intensificación II')).toEqual([
+      { fecha: '2026-10-26', diaNumero: 1, diaNombre: 'Banca Pesada', mesociclo: 'Mesociclo 4 Intensificación II' },
+    ])
+  })
+
+  it('asigna repeticiones, RPE y peso por fase hasta el número de series indicado', () => {
+    const workout = findWorkoutInSheet(SHEET_M4_INTENSIFICACION_II, '2026-10-26', 'Mesociclo 4 Intensificación II')
+    expect(workout.ejercicios[0].seriesProgramadas).toMatchObject([
+      { numero: 1, repeticionesProgramadas: 1, rpeProgramado: 7.5, pesoSugeridoKg: 85, descansoPrescritoSeg: 240 },
+      { numero: 2, repeticionesProgramadas: 2, rpeProgramado: 8, pesoSugeridoKg: 82 },
+      { numero: 3, repeticionesProgramadas: 3, rpeProgramado: 7, pesoSugeridoKg: 73.5 },
+      { numero: 4, repeticionesProgramadas: 3, rpeProgramado: 7, pesoSugeridoKg: 73.5 },
+      { numero: 5, repeticionesProgramadas: 3, rpeProgramado: 7, pesoSugeridoKg: 73.5 },
+    ])
+  })
+})

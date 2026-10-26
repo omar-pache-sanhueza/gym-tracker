@@ -217,6 +217,7 @@ La planilla tiene una hoja por bloque de la periodización:
 
 - `Contexto`, `Tablas de Referencia`, `Selección de Ejercicios` (no se consumen).
 - `Mesociclo 1 Adaptación` … `Mesociclo 9 Mantención` (la app las recorre).
+- Se acepta también el prefijo `Mespciclo` si una pestaña conserva esa errata en su nombre.
 - `Semana de PR` (también se considera entrenable).
 
 Dentro de cada hoja de mesociclo:
@@ -232,6 +233,8 @@ Los días dentro de una misma semana se repiten en bloques verticales de ~12 fil
 **Descanso (`weekCol+6`):** el formato nuevo entrega un número desnudo en minutos (`4` → 240 s, `2,5` → 150 s), porque el encabezado ya rotula la unidad `(min)`. El formato viejo usaba string con sufijo (`" 3 min"`, `"1,5 min"`, `"30 s"`). El parser soporta ambos.
 
 **Esquema top / back-off (levantamientos principales del bloque de fuerza):** una sola fila de ejercicio puede representar varias series con cargas distintas. Las repeticiones llegan como `5 top / 7 back-off` y el peso como `70 / 62,5`. Regla de parseo: la **serie 1** toma el valor a la **izquierda** del `/` (top) y las **series 2..N** el valor a la **derecha** (back-off). La detección se gatilla solo cuando el campo de repeticiones contiene las palabras `top` y `back` (así, valores como `60 seg / lado` no se dividen).
+
+**Esquema por fases (bloque de intensificación):** una fila puede indicar `1x1 single / 1x2 doble / 3x3 back-offs` en repeticiones, `7,5-8 / 8 / 7-7,5` en RPE y `85 / 82 / 73,5` en peso. El primer número de cada fase indica cuántas series llevan las repeticiones, el peso y el RPE correspondientes; en este ejemplo son cinco. El total de objetos `SerieProgramada` lo determina la columna `Series`. En rangos de RPE se prellena el extremo inferior, ya que el modelo guarda un único valor numérico.
 
 ### 7.2 Algoritmo de resolución de "día de hoy"
 

@@ -37,7 +37,7 @@ Web app personal de un solo usuario (Omar). Gym Tracker que lee una Google Sheet
 - Texto de UI en español neutro latinoamericano.
 - Indentación: 2 espacios. Comillas simples en JS, dobles en JSX/HTM solo cuando son necesarias.
 - Cada función exportada del backend tiene comentario JSDoc con `@param` y `@returns`.
-- Commits: usar Conventional Commits (`feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`).
+- Commits: usar Conventional Commits (`feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`). Escribir la descripción del commit en español.
 
 ## Estructura de archivos
 

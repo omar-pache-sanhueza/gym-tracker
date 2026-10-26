@@ -202,6 +202,26 @@ function parsePeso(pesoRaw) {
   return isNaN(n) ? null : n
 }
 
+/** Lee fases como "1x1 single / 1x2 doble / 3x3 back-offs". */
+function parseSeriesPhases(repsRaw, pesoRaw, rpeRaw) {
+  const reps = repsRaw.split('/').map(s => s.trim())
+  const pesos = pesoRaw.split('/').map(s => s.trim())
+  const rpes = rpeRaw.split('/').map(s => s.trim())
+  if (reps.length < 2 || pesos.length !== reps.length) return null
+
+  const phases = reps.map((token, i) => {
+    const match = token.match(/^(\d+)\s*[x×]\s*(\d+)\b/i)
+    if (!match) return null
+    return {
+      count: Number(match[1]),
+      reps: Number(match[2]),
+      peso: parsePeso(pesos[i]),
+      rpe: rpes.length === reps.length ? firstNumber(rpes[i]) : firstNumber(rpeRaw),
+    }
+  })
+  return phases.every(phase => phase && phase.count > 0) ? phases : null
+}
+
 function parseExercises(values, startRow, weekCol) {
   const exercises = []
   for (let r = startRow; r < Math.min(startRow + 10, values.length); r++) {
@@ -221,6 +241,8 @@ function parseExercises(values, startRow, weekCol) {
 
     const rpeParsed = isDash(rpeRaw) ? null : parseFloat(rpeRaw.replace(',', '.'))
     const descansoSeg = parseRestSeconds(descansoRaw)
+
+    const phases = parseSeriesPhases(repsRaw, pesoRaw, rpeRaw)
 
     // Esquema top / back-off: la fila representa series con cargas distintas.
     // Serie 1 toma el valor a la izquierda del "/"; las siguientes el de la derecha.
@@ -243,14 +265,23 @@ function parseExercises(values, startRow, weekCol) {
       return parsePeso(pesoRaw)
     }
 
+    const phaseFor = i => {
+      let offset = i
+      for (const phase of phases) {
+        if (offset < phase.count) return phase
+        offset -= phase.count
+      }
+      return phases[phases.length - 1]
+    }
+
     exercises.push({
       orden: parseInt(ordenRaw),
       nombre,
       seriesProgramadas: Array.from({ length: numSeries }, (_, i) => ({
         numero: i + 1,
-        repeticionesProgramadas: repsFor(i),
-        rpeProgramado: (rpeParsed !== null && !isNaN(rpeParsed)) ? rpeParsed : null,
-        pesoSugeridoKg: pesoFor(i),
+        repeticionesProgramadas: phases ? phaseFor(i).reps : repsFor(i),
+        rpeProgramado: phases ? phaseFor(i).rpe : (rpeParsed !== null && !isNaN(rpeParsed)) ? rpeParsed : null,
+        pesoSugeridoKg: phases ? phaseFor(i).peso : pesoFor(i),
         descansoPrescritoSeg: descansoSeg,
         // El comentario pre-asignado de la planilla pre-carga la primera serie.
         comentarioSugerido: i === 0 ? comentario : '',
