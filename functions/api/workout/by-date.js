@@ -11,7 +11,7 @@ export async function onRequestGet({ request, env }) {
 
   try {
     const sheetNames = await getSheetNames(env.GOOGLE_SHEET_ID, env.GOOGLE_SHEETS_API_KEY)
-    const mesocicloNames = sheetNames.filter(n => /^Mes[op]ciclo/i.test(n) || /^Semana de PR/i.test(n))
+    const mesocicloNames = sheetNames.filter(n => /^Mesociclo/i.test(n) || /^Semana de PR/i.test(n))
 
     for (const name of mesocicloNames) {
       try {

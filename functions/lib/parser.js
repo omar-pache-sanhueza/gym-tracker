@@ -112,18 +112,10 @@ function findWeekCols(values) {
   const row0 = values[0] || []
   const cols = []
 
-  // Buscar "Semana N" en incrementos de 11 columnas desde col 3 (1-indexed col 4)
-  for (let col = 3; col < row0.length; col += 11) {
-    const match = String(row0[col] || '').match(/Semana\s+(\d+)/i)
+  // Buscar cada encabezado: el ancho de los bloques puede variar entre semanas.
+  for (let col = 0; col < row0.length; col++) {
+    const match = String(row0[col] || '').trim().match(/^Semana\s+(\d+)$/i)
     if (match) cols.push({ col, semana: parseInt(match[1]) })
-  }
-
-  // Fallback: búsqueda lineal si la planilla no empieza exactamente en col 3
-  if (cols.length === 0) {
-    for (let col = 0; col < row0.length; col++) {
-      const match = String(row0[col] || '').match(/Semana\s+(\d+)/i)
-      if (match) cols.push({ col, semana: parseInt(match[1]) })
-    }
   }
 
   return cols

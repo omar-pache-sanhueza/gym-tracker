@@ -88,6 +88,7 @@ apps-script/
 - **Cronómetro general durante descanso:** debe seguir corriendo, NO pausarse cuando el overlay del descanso aparece encima.
 - **Cookie de sesión:** `SameSite=Strict` rompe el login si se prueba la API desde un dominio distinto al del frontend. Para pruebas cross-origin usar `SameSite=Lax` solo en dev.
 - **Fechas de la planilla:** desde Mesociclo 3 la fecha vive en la celda **contigua** al título del día (`weekCol+1`), como `lunes 27/07/2026`; el formato viejo la embebía en el propio título (`Día 1 - Piernas A:  Lunes 11/05/2026`). El parser extrae `DD/MM/AAAA` con regex `/(\d{2})\/(\d{2})\/(\d{4})/` de la celda inline si existe y, si no, de la contigua. La comparación con "hoy" se hace en zona horaria `America/Santiago`.
+- **Columnas de semana:** no asumir bloques de 11 columnas. En `Mesociclo 4 Intensificación II`, `Semana 4` empieza en AL (columna 38), mientras `Semana 3` empieza en Z (columna 26). Buscar todas las etiquetas `Semana N` en la primera fila.
 - **Cuota de Apps Script:** 100 mails/día con Gmail gratis. No agrupar envíos ni hacer reintentos automáticos agresivos.
 
 ## Antes de proponer un PR

@@ -186,10 +186,14 @@ describe('findWorkoutInSheet (hoja real Mesociclo 3 Fuerza II)', () => {
 
 // Snapshot de la nueva prescripción en Semana 4: tres fases de repeticiones,
 // RPE y peso en una sola fila. Las fases suman las 5 series de la columna Series.
-const week4Col = 36
+const week4Col = 37
 const week4 = (...cells) => new Array(week4Col).fill('').concat(cells)
+const weekHeaders = week4('Semana 4')
+weekHeaders[3] = 'Semana 1'
+weekHeaders[14] = 'Semana 2'
+weekHeaders[25] = 'Semana 3'
 const SHEET_M4_INTENSIFICACION_II = [
-  week4('Semana 4'),
+  weekHeaders,
   week4('Día 1 - Banca Pesada:', 'lunes 26/10/2026'),
   week4(''),
   week4('Orden', 'Ejercicio', 'Series', 'Repeticiones', 'RPE', 'Peso (kg)',

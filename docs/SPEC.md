@@ -217,11 +217,10 @@ La planilla tiene una hoja por bloque de la periodización:
 
 - `Contexto`, `Tablas de Referencia`, `Selección de Ejercicios` (no se consumen).
 - `Mesociclo 1 Adaptación` … `Mesociclo 9 Mantención` (la app las recorre).
-- Se acepta también el prefijo `Mespciclo` si una pestaña conserva esa errata en su nombre.
 - `Semana de PR` (también se considera entrenable).
 
 Dentro de cada hoja de mesociclo:
-- **Fila 1:** etiqueta `Semana N` cada 11 columnas, empezando en la columna 4.
+- **Fila 1:** etiquetas `Semana N` al inicio de cada bloque. Su posición puede variar: en `Mesociclo 4 Intensificación II`, `Semana 4` comienza en AL (columna 38), no en AK. El parser busca cada etiqueta en toda la fila.
 - **Fila 2:** encabezado del día. A partir del Mesociclo 3 el título y la fecha viven en **celdas separadas**: la celda del título trae `Día N - Nombre:` (ej.: `Día 1 - Piernas A:`) y la celda **contigua a la derecha** (`weekCol+1`) trae la fecha con formato `WeekdayName DD/MM/AAAA` (ej.: `lunes 22/06/2026`). El formato anterior (Mesociclos 1–2) embebía la fecha en el mismo título (`Día 1 - Piernas A:  Lunes 30/03/2026`); el parser soporta ambos: usa la fecha inline si existe, si no lee la celda contigua.
 - **Fila 3:** indicadores de bienestar pre-entreno (opcional). Los seis indicadores se rotulan como encabezados inline en la fila del día (`Calidad del Sueño`, `Motivación`, `Energía`, `Nivel de Estrés`, `Salud articular`, `Recuperación muscular`, más `Comentarios pre entreno`) y esta fila trae los valores sugeridos debajo. En `Mesociclo 3 Fuerza` la fila iba vacía; desde `Mesociclo 3 Fuerza II` viene poblada (típicamente `5` en cada indicador). El parser **no** consume esos valores sugeridos: `bienestarSugerido` se emite con placeholders y el frontend arranca las estrellas en 5, así que una fila vacía o poblada no cambia el comportamiento.
 - **Fila 4:** encabezados de tabla esperados: `Orden | Ejercicio | Series | Repeticiones | RPE | Peso (kg) | Descanso entre series (min) | Tonelaje (kg) | Comentarios del ejercicio`. La columna `Tonelaje (kg)` (`weekCol+7`) es un agregado de carga y **el parser la ignora por diseño**; el comentario del ejercicio está en `weekCol+8`. A la izquierda del bloque de semana (columnas A/B) puede haber narrativa del ciclo (`Objetivo`, `Principios`, `Plan`); el parser solo lee desde `weekCol` en adelante, así que esa narrativa se ignora sin afectar el parseo de ejercicios.
@@ -242,7 +241,7 @@ Los días dentro de una misma semana se repiten en bloques verticales de ~12 fil
 1. Calcular fecha local en zona America/Santiago.
 2. Para cada hoja cuyo nombre empieza con "Mesociclo" o sea "Semana de PR":
    a. Leer las filas 1 y 2 completas (todas las columnas usadas).
-   b. Por cada bloque de "Semana N" (columnas 4, 15, 26, ...):
+   b. Por cada bloque de "Semana N" encontrado en la fila 1:
       - Iterar Día 1..4 (offsets verticales conocidos).
       - Extraer la fecha con regex /(\d{2})\/(\d{2})\/(\d{4})/ desde la
         celda del título del día (formato viejo) o, si no la trae,
